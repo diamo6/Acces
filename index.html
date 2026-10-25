@@ -1014,14 +1014,12 @@ $('#btnFetchExport').onclick=async()=>{
       +'<p class="note">สรุปรายงานโดย Check-In App · '+new Date().toLocaleString('th-TH')+'</p>'
       +'</body></html>';
 
-    const blob=new Blob([html],{type:'text/html'});
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');
-    a.href=url;a.download='attendance-report-'+from+'-to-'+to+'.html';
-    document.body.appendChild(a);a.click();document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    const w=window.open('','_blank');
+    if(!w){st.textContent='❌ เบราว์เซอร์ป้อบล็อก popup — ให้อนุญาต popup';return}
+    w.document.write(html);
+    w.document.close();
 
-    st.textContent='✅ สำเร็จ — ดาวน์โหลด '+records.length+' รายการ (HTML)';
+    st.textContent='✅ สำเร็จ — เปิดหน้ารายงาน '+records.length+' รายการ';
   }catch(err){
     st.textContent='❌ ไม่สามารถโหลดข้อมูลได้: '+(err.message||'เกิดข้อผิดพลาด');
   }

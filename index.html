@@ -352,7 +352,7 @@ img{display:block}
     <section class="screen active" id="scr-login">
       <div class="login-wrap">
         <div class="brand-tag">NOC · CLOUD OPERATION SUPPORT</div>
-        <img src="ac3.png" alt="คำอธิบายรูปภาพ" class="logo-img">
+        <img src="ac3.png" alt="โลโก้" class="logo-img" style="width:70%">
         <h2 class="wordmark"> Accès <span class="chop"></span></h2>
         <div class="wordmark-sub">Less friction. More focus</div>
         <div class="punch-strip" id="punchStrip"></div>
@@ -608,6 +608,7 @@ const ENM=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DE
 const fmtClock=(d=new Date())=>pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
 const fmtHM=(ts)=>{const d=new Date(ts);return pad(d.getHours())+':'+pad(d.getMinutes())};
 const fmtShortTs=ts=>{const d=new Date(ts);return pad(d.getDate())+' '+ENM[d.getMonth()]+' · '+pad(d.getHours())+':'+pad(d.getMinutes())};
+const fmtDate=d=>{if(!d)return'—';try{const dt=new Date(d);return pad(dt.getDate())+'/'+pad(dt.getMonth()+1)+'/'+dt.getFullYear()}catch(e){return d}};
 const fmtFullTs=ts=>{const d=new Date(ts);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+fmtClock(d)};
 const thFullDate=(d=new Date())=>new Intl.DateTimeFormat('th-TH',{dateStyle:'full'}).format(d);
 const sameDay=(a,b=new Date())=>{const x=new Date(a);return x.getFullYear()===b.getFullYear()&&x.getMonth()===b.getMonth()&&x.getDate()===b.getDate()};
@@ -979,20 +980,7 @@ $('#btnFetchExport').onclick=async()=>{
   try{
     const res=await api('/api/attendance?all=1&from='+from+'&to='+to);
     const records=res.records||[];
-    if(!records.length){st.textContent='✅ไม่พบข้อมูลในชวงวันที่เลือก';return}
-
-    const totalHrs=records.reduce((s,r)=>{
-      if(r.checkInAt&&r.checkOutAt){
-        return s+(new Date(r.checkOutAt)-new Date(r.checkInAt))/36e5;
-      }
-      return s;
-    },0);
-    const avgHrs=records.reduce((s,r)=>{
-      if(r.checkInAt&&r.checkOutAt){
-        return s+(new Date(r.checkOutAt)-new Date(r.checkInAt))/36e5;
-      }
-      return s;
-    },0)/records.length||0;
+    if(!records.length){st.textContent='✅ไม่พบข้อมูลในช่วงวันที่เลือก';return}
 
     // Generate HTML table file
     let tableRows=records.map(r=>{
@@ -1001,30 +989,27 @@ $('#btnFetchExport').onclick=async()=>{
         +'<td>'+fmtDate(r.workDate||'')+'</td>'
         +'<td>'+fmtHM(r.checkInAt)+'</td>'
         +'<td>'+fmtHM(r.checkOutAt)+'</td>'
-        +'<td>'+durText(r.checkInAt,r.checkOutAt)+'</td>'
-        +'<td>'+(r.status||'')+'</td>'
         +'</tr>';
     }).join('');
 
-    const html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>รายงานการลงชื่อกเข้า-ออก</title>'
+    const html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>รายงานการลงชื่อเข้า-ออก</title>'
       +'<style>body{font-family:sans-serif;padding:20px;background:#fff;color:#222}'
       +'table{width:100%;border-collapse:collapse;margin-top:12px}'
-      +'th,td{border:1px solid #ddd;padding:8px 12px;text-align:left;font-size:13px}'
-      +'th{background:#f5f5f5;font-weight:600}'
+      +'th,td{border:1px solid #ddd;padding:10px 14px;text-align:left;font-size:14px}'
+      +'th{background:#7047EB;color:#fff;font-weight:600}'
+      +'tr:nth-child(even){background:#f8f8f8}'
       +'.summary{margin-bottom:16px;padding:12px;background:#f9f9f9;border-radius:6px}'
       +'.summary span{margin-right:20px;font-size:14px}'
       +'h2{margin:0 0 8px;color:#333}'
       +'.note{font-size:12px;color:#888;margin-top:16px}'
       +'@media print{body{padding:10px}}</style></head><body>'
-      +'<h2>รายงานการลงชื่อกเข้า-ออก</h2>'
+      +'<h2>รายงานการลงชื่อเข้า-ออก</h2>'
       +'<div class="summary">'
-      +'<span><b>ชวงวันที่:</b> '+from+' – '+to+'</span>'
+      +'<span><b>ช่วงวันที่:</b> '+from+' – '+to+'</span>'
       +'<span><b>จำนวน:</b> '+records.length+' รายการ</span>'
-      +'<span><b>รวมชั่วโมง:</b> '+totalHrs.toFixed(2)+' ชม.</span>'
-      +'<span><b>เฉลี่ย:</b> '+avgHrs.toFixed(2)+' ชม./วัน</span>'
       +'</div>'
       +'<table><thead><tr>'
-      +'<th>ชื่อ</th><th>วันที่</th><th>IN</th><th>OUT</th><th>ชั่วโมง</th><th>สถานะ</th>'
+      +'<th>ชื่อ</th><th>วันที่</th><th>เวลาเข้า</th><th>เวลาออก</th>'
       +'</tr></thead><tbody>'+tableRows+'</tbody></table>'
       +'<p class="note">สรุปรายงานโดย Check-In App · '+new Date().toLocaleString('th-TH')+'</p>'
       +'</body></html>';
@@ -1042,7 +1027,7 @@ $('#btnFetchExport').onclick=async()=>{
   }
 };
 
-function fmtDate(d){if(!d)return'—';try{return new Date(d).toLocaleDateString('th-TH')}catch(e){return d}}
+
 
 /* ============ Check-in Form ============ */
 const ddName=makeDD('#ddName',{label:'เลือกชื่อ',options:NAMES.map(n=>({v:n,label:n})),placeholder:'เลือกชื่อ',onChange:v=>state.name=v});

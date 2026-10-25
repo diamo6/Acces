@@ -7,3 +7,11 @@ __pycache__/
 .venv/
 dist/
 build/
+site/.wrangler/
+site/public/
+test-*.py
+test-*.html
+test-*.js
+checkin-app-flow.html
+nul
+EXPORT-API.md

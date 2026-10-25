@@ -1,0 +1,9 @@
+.team-code.txt
+data/
+data/*.db
+__pycache__/
+*.pyc
+.nox/
+.venv/
+dist/
+build/

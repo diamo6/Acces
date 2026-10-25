@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><link rel="icon" type="image/x-icon" href="acccs.ico">
+<title> Accès -  "Less friction. More focus.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ---------- โทนสี / ตัวแปร ---------- */
+:root{
+  --paper:#F5F1E8; --paper-2:#ECE7DA; --card:#FCFAF3;
+  --ink:#1B1914; --ink-2:#4A463C; --ink-3:#8B8574;
+  --line:#D8D1BF; --line-2:#C4BCA6;
+  --accent:#E8490F; --accent-deep:#C23A08; --ok:#1E7A46;
+  --dark:#141310; --dark-2:#201E19; --dline:#3A372E; --dpaper:#F0EBDE;
+  --sans:'IBM Plex Sans Thai',sans-serif; --mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--sans);background:#161411;color:var(--ink);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+button{font-family:inherit;cursor:pointer;color:inherit}
+img{display:block}
+.mono{font-family:var(--mono)}
+.hidden{display:none!important}
+:focus-visible{outline:2.5px solid var(--accent);outline-offset:2px}
+
+/* ---------- เวที (desktop) ---------- */
+.stage{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;
+  background-color:#161411;background-image:radial-gradient(#242019 1px,transparent 1.3px);background-size:22px 22px}
+.side-label{position:absolute;top:50%;transform:translateY(-50%);writing-mode:vertical-rl;
+  font-family:var(--mono);font-size:11px;letter-spacing:.5em;color:#4A453A;user-select:none}
+.side-label.l{left:calc(50% - 265px)} .side-label.r{right:calc(50% - 265px)}
+.stage-note{position:absolute;bottom:16px;left:0;right:0;text-align:center;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:#4A453A;user-select:none}
+
+/* ---------- กรอบโทรศัพท์ ---------- */
+.phone{position:relative;width:410px;height:min(870px,94vh);background:var(--paper);
+  border:1.5px solid #2A2721;border-radius:30px;overflow:hidden;box-shadow:0 30px 60px rgba(0,0,0,.5)}
+@media(max-width:560px){
+  .phone{width:100%;height:100vh;height:100dvh;border-radius:0;border:none}
+  .side-label,.stage-note{display:none}
+  .stage{background:none}
+}
+
+/* ---------- ระบบหน้าจอ / ทรานซิชัน ---------- */
+.screen{position:absolute;inset:0;background:var(--paper);overflow-y:auto;overflow-x:hidden;
+  transform:translateX(100%);opacity:0;pointer-events:none;z-index:1;
+  transition:transform .4s cubic-bezier(.22,.9,.3,1),opacity .4s}
+.screen.active{transform:none;opacity:1;pointer-events:auto;z-index:2}
+.screen.away-l{transform:translateX(-26%);opacity:0;pointer-events:none}
+.screen.away-r{transform:translateX(26%);opacity:0;pointer-events:none}
+.screen.pre-r{transition:none!important;transform:translateX(100%)}
+.screen.pre-l{transition:none!important;transform:translateX(-100%)}
+.no-anim .screen{transition:none!important}
+.screen.dark{background:var(--dark);color:var(--dpaper)}
+
+/* ---------- องค์ประกอบร่วม ---------- */
+.lbl{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--ink-2)}
+.lbl::before{content:'';width:7px;height:7px;background:var(--accent);border-radius:2px;flex:none}
+.req{color:var(--accent);font-weight:700}
+.tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--ink-2)}
+.icon-btn{width:42px;height:42px;flex:none;border:1.5px solid var(--ink);border-radius:11px;background:var(--card);
+  display:grid;place-items:center;color:var(--ink);transition:transform .08s}
+.icon-btn:active{transform:translate(1.5px,1.5px)}
+.icon-btn.sm{width:34px;height:34px;border-radius:9px}
+.icon-btn.dark{background:transparent;border-color:var(--dline);color:var(--dpaper)}
+.mini-btn{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:7px 11px;
+  border:1.5px solid var(--ink);border-radius:9px;background:transparent;transition:transform .08s}
+.mini-btn:active{transform:translate(1px,1px)}
+.mini-btn.ondark{color:var(--dpaper);border-color:rgba(240,235,222,.45)}
+.mini-btn.danger{color:var(--accent-deep);border-color:var(--accent-deep)}
+.btn-primary{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:60px;
+  border:1.5px solid var(--ink);border-radius:14px;background:var(--ink);color:var(--paper);
+  font-size:17px;font-weight:600;box-shadow:4px 4px 0 var(--accent);transition:transform .09s,box-shadow .09s}
+.btn-primary:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--accent)}
+.btn-accent{display:flex;align-items:center;justify-content:center;gap:9px;height:58px;border:1.5px solid var(--accent-deep);
+  border-radius:14px;background:var(--accent);color:#FFF6EC;font-size:17px;font-weight:700;
+  box-shadow:4px 4px 0 var(--ink);transition:transform .09s,box-shadow .09s}
+.btn-accent:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
+.btn-accent:disabled{opacity:.75}
+.btn-ghost{height:54px;border:1.5px solid var(--ink);border-radius:13px;background:transparent;
+  font-size:16px;font-weight:600;transition:transform .08s}
+.btn-ghost:active{transform:translate(1.5px,1.5px)}
+.btn-ghost.dark{border-color:rgba(240,235,222,.5);color:var(--dpaper)}
+.btn-paper{height:54px;border:1.5px solid var(--dpaper);border-radius:13px;background:var(--dpaper);color:var(--ink);
+  font-size:16px;font-weight:700;transition:transform .08s}
+.btn-paper:active{transform:translate(1.5px,1.5px)}
+.spin{width:18px;height:18px;flex:none;border:2.5px solid rgba(255,246,236,.35);border-top-color:#FFF6EC;
+  border-radius:50%;animation:rot .7s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+
+/* ---------- ท็อปบาร์ ---------- */
+.topbar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;padding:14px 16px;
+  background:var(--paper);border-bottom:1.5px solid var(--ink)}
+.topbar-title{flex:1;font-size:17px;font-weight:700}
+.step-tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--ink-2);
+  border:1.5px solid var(--ink);padding:5px 9px;border-radius:8px}
+
+/* ---------- ดรอปดาวน์ (bottom sheet) ---------- */
+.dd-btn{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;height:54px;padding:0 15px;
+  border:1.5px solid var(--ink);border-radius:11px;background:var(--card);font-size:16.5px;text-align:left}
+.dd-btn svg{flex:none;transition:transform .25s}
+.dd-btn.open svg{transform:rotate(180deg)}
+.dd-btn .ph{color:var(--ink-3);font-weight:400}
+.dd.invalid .dd-btn{border-color:var(--accent);animation:shakeX .35s}
+.dd-dark .dd-btn{border-color:rgba(240,235,222,.5);background:rgba(240,235,222,.06);color:var(--dpaper)}
+.dd-dark .dd-btn .ph{color:rgba(240,235,222,.45)}
+.dd-dark.invalid .dd-btn{border-color:var(--accent)}
+@keyframes shakeX{20%{transform:translateX(-5px)}45%{transform:translateX(5px)}70%{transform:translateX(-3px)}}
+.dd-backdrop{position:absolute;inset:0;background:rgba(20,18,14,.52);opacity:0;transition:opacity .28s;
+  pointer-events:auto;z-index:40}
+.dd-backdrop.show{opacity:1}
+.dd-sheet{position:absolute;left:12px;right:12px;bottom:12px;background:var(--paper);border:1.5px solid var(--ink);
+  border-radius:16px;padding:8px 10px 12px;box-shadow:5px 5px 0 rgba(27,25,20,.9);
+  transform:translateY(105%);transition:transform .32s cubic-bezier(.2,.9,.27,1);pointer-events:auto;z-index:41}
+.dd-sheet.open{transform:none}
+.dd-sheet .grab{width:42px;height:4.5px;border-radius:99px;background:var(--line-2);margin:6px auto 4px}
+.dd-head{display:flex;justify-content:space-between;align-items:center;padding:6px 8px 10px}
+.dd-head .lbl{font-size:13px}
+.dd-opt{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 12px;
+  border:1.5px solid transparent;border-radius:11px;background:transparent;text-align:left}
+.dd-opt:hover{background:var(--paper-2)}
+.dd-opt b{display:block;font-size:16px;font-weight:600}
+.dd-opt small{display:block;font-size:12px;color:var(--ink-3);margin-top:2px;font-weight:400}
+.dd-opt.sel{border-color:var(--ink);background:var(--card)}
+.dd-opt .dd-check{color:var(--accent);flex:none}
+.text-input{width:100%;height:54px;padding:0 15px;border:1.5px solid var(--ink);border-radius:11px;
+  background:var(--card);font-family:var(--mono);font-size:16px;letter-spacing:.06em;color:var(--ink)}
+.text-input::placeholder{color:var(--ink-3);letter-spacing:0;font-size:14px}
+
+/* ---------- Toast ---------- */
+#overlay-root{position:absolute;inset:0;pointer-events:none;z-index:70}
+.toast-wrap{position:absolute;left:0;right:0;bottom:calc(18px + env(safe-area-inset-bottom));
+  display:flex;flex-direction:column;align-items:center;gap:8px;z-index:60;pointer-events:none}
+.toast{display:flex;align-items:center;gap:9px;max-width:calc(100% - 32px);background:var(--ink);color:var(--paper);
+  border-radius:10px;padding:11px 15px;font-size:13.5px;font-weight:500;
+  box-shadow:4px 4px 0 rgba(27,25,20,.3);opacity:0;transform:translateY(12px);transition:.28s;pointer-events:auto}
+.toast.show{opacity:1;transform:none}
+.toast svg{flex:none}
+.toast.err svg{color:#FF6B35}.toast.ok svg{color:#4CBF82}
+
+/* ---------- Modal ---------- */
+.modal-bd{position:absolute;inset:0;background:rgba(20,18,14,.55);opacity:0;transition:opacity .25s;pointer-events:auto;z-index:50}
+.modal-bd.show{opacity:1}
+.modal{position:absolute;left:50%;top:50%;transform:translate(-50%,-46%);opacity:0;width:calc(100% - 36px);max-width:336px;
+  max-height:82%;overflow:auto;background:var(--paper);border:1.5px solid var(--ink);border-radius:16px;
+  box-shadow:6px 6px 0 var(--ink);transition:.28s cubic-bezier(.2,.9,.3,1);pointer-events:auto;z-index:51}
+.modal.show{opacity:1;transform:translate(-50%,-50%)}
+.modal-head{display:flex;justify-content:space-between;align-items:center;padding:13px 15px;border-bottom:1.5px dashed var(--line-2)}
+.modal-ph img{width:100%;max-height:300px;object-fit:cover}
+.modal .payload{margin:13px 15px 2px}
+.modal-actions{display:flex;gap:10px;padding:13px 15px 15px}
+.modal-actions .mini-btn{flex:1;justify-content:center}
+.modal-text{padding:18px 17px 6px;font-size:14.5px;line-height:1.65;color:var(--ink-2)}
+
+/* ---------- 1) หน้า Login ---------- */
+.login-wrap{min-height:100%;display:flex;flex-direction:column;padding:46px 28px 26px}
+.brand-tag{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;color:var(--ink-2)}
+.brand-tag::before{content:'';width:9px;height:9px;background:var(--accent);border-radius:2px}
+.wordmark{font-size:54px;font-weight:700;line-height:1.05;letter-spacing:-.01em;margin-top:18px;display:flex;align-items:flex-end;gap:8px}
+.wordmark .chop{width:13px;height:13px;background:var(--accent);border-radius:3px;margin-bottom:11px}
+.wordmark-sub{font-family:var(--mono);font-size:11px;letter-spacing:.42em;color:var(--ink-2);margin-top:9px}
+.punch-strip{display:flex;gap:5px;margin-top:26px}
+.punch-strip i{width:10px;height:15px;border:1.5px solid var(--ink-2);border-radius:2.5px}
+.punch-strip i.on{background:var(--ink);border-color:var(--ink)}
+.punch-strip i.gap{margin-left:9px}
+.punch-caption{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--ink-3);margin-top:7px}
+.login-fields{margin-top:30px;display:flex;flex-direction:column;gap:20px}
+.login-hint{font-family:var(--mono);font-size:11px;color:var(--ink-3);letter-spacing:.06em;margin-top:16px}
+.login-btn{width:100%;margin-top:14px}
+.login-foot{margin-top:auto;padding-top:26px;text-align:center;font-family:var(--mono);font-size:10px;
+  letter-spacing:.22em;color:var(--ink-3)}
+
+/* ---------- 2) หน้า Home ---------- */
+.topbar-id .tag{display:block;margin-bottom:3px}
+.topbar-user{font-size:17px;font-weight:700;display:flex;align-items:center;gap:8px}
+.topbar-user::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--ok)}
+.home-body{padding:22px 20px calc(26px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:16px}
+.cb-date{font-size:13.5px;font-weight:500;color:var(--ink-2)}
+.cb-time{font-family:var(--mono);font-weight:600;font-size:46px;letter-spacing:.01em;margin:2px 0 6px;font-variant-numeric:tabular-nums}
+.cb-shift{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink-2);font-weight:500}
+.cb-dot{width:9px;height:9px;border-radius:50%;flex:none}
+.cb-dot.on{background:var(--ok)}.cb-dot.off{background:var(--line-2)}
+.today-card{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 17px;
+  border:1.5px dashed var(--line-2);border-radius:13px}
+.today-card.done{border:1.5px solid var(--ink);background:var(--card)}
+.tc-title{font-size:15.5px;font-weight:700}
+.tc-title.ok{color:var(--ok)}
+.tc-meta{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--ink-3);margin-top:4px}
+.tc-icon{color:var(--ink-3)}
+.mini-stamp{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.1em;color:var(--ok);
+  border:2px solid var(--ok);border-radius:7px;padding:5px 9px;transform:rotate(-6deg);flex:none}
+.cta-checkin{display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;padding:17px 19px;
+  border:1.5px solid var(--ink);border-radius:16px;background:var(--ink);color:var(--paper);
+  box-shadow:5px 5px 0 var(--accent);transition:transform .09s,box-shadow .09s;text-align:left}
+.cta-checkin:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--accent)}
+.cta-txt b{display:block;font-size:19px;font-weight:700}
+.cta-txt .mono{display:block;font-size:10.5px;letter-spacing:.3em;color:rgba(245,241,232,.6);margin-top:4px}
+.cta-ic{width:48px;height:48px;flex:none;border:1.5px solid rgba(245,241,232,.85);border-radius:12px;
+  display:grid;place-items:center;transition:transform .2s}
+.cta-checkin:hover .cta-ic{transform:translateX(4px)}
+.hist-head{display:flex;align-items:center;gap:10px;margin-top:6px}
+.hist-head .lbl{flex:1}
+.hist-count{font-family:var(--mono);font-size:11px;color:var(--ink-3)}
+.hist-row{display:flex;align-items:center;gap:12px;width:100%;padding:12px 2px;background:none;border:none;
+  border-bottom:1.5px dashed var(--line-2);text-align:left}
+.hist-thumb{width:46px;height:46px;flex:none;border-radius:9px;border:1.5px solid var(--ink);object-fit:cover;background:var(--paper-2)}
+.hist-mid{flex:1;min-width:0}
+.hist-name{font-size:15px;font-weight:700}
+.hist-shift{font-family:var(--mono);font-size:11.5px;color:var(--ink-2);margin-left:8px}
+.hist-meta{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--ink-3);margin-top:3px}
+.chip{display:inline-flex;align-items:center;gap:6px;flex:none;font-size:11px;font-weight:600;
+  padding:5px 10px;border-radius:99px;border:1.5px solid}
+.chip i{width:7px;height:7px;border-radius:50%}
+.chip.st-on{color:var(--ok);border-color:var(--ok)}.chip.st-on i{background:var(--ok)}
+.chip.st-rm{color:var(--accent-deep);border-color:var(--accent-deep)}.chip.st-rm i{background:var(--accent)}
+.empty{border:1.5px dashed var(--line-2);border-radius:13px;padding:30px 20px;text-align:center;color:var(--ink-3)}
+.empty svg{margin:0 auto 10px;display:block}
+.empty p{font-size:13.5px;line-height:1.6}
+
+/* ---------- 3) หน้า Form ---------- */
+.form-body{padding:22px 20px calc(26px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:18px}
+.form-card{background:var(--card);border:1.5px solid var(--ink);border-radius:15px;overflow:hidden}
+.fc-head{display:flex;justify-content:space-between;align-items:center;padding:13px 17px;background:var(--paper-2);
+  border-bottom:1.5px solid var(--ink)}
+.frow{padding:16px 17px;border-bottom:1.5px dashed var(--line-2)}
+.frow:last-child{border-bottom:none}
+.frow .lbl{margin-bottom:11px}
+.fixed-val{display:flex;align-items:center;gap:9px;font-size:16.5px;font-weight:700;min-height:32px}
+.fixed-val svg{color:var(--ink-3);flex:none}
+.fx-tag{margin-left:auto;font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;color:var(--ink-3);
+  border:1.5px dashed var(--line-2);padding:4px 7px;border-radius:6px}
+.form-note{display:flex;gap:10px;font-size:13px;line-height:1.7;color:var(--ink-2);padding:0 2px}
+.form-note svg{flex:none;margin-top:2px;color:var(--accent)}
+
+/* ---------- 4) หน้า Camera (โทนมืด) ---------- */
+#scr-camera{display:flex;flex-direction:column;overflow:hidden}
+.cam-top{display:flex;align-items:center;gap:12px;padding:14px 16px 8px}
+.cam-title{flex:1;font-size:16px;font-weight:700}
+.cam-title .tag{display:block;margin-top:3px;color:rgba(240,235,222,.5)}
+.cam-status{padding:6px 16px 14px}
+.cam-status .lbl{color:rgba(240,235,222,.6);margin-bottom:9px}
+.cam-stage{flex:1;position:relative;background:#0B0A08;overflow:hidden}
+.cam-stage video,.cam-stage #camFrozen{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.vf-grid i{position:absolute;background:rgba(240,235,222,.16)}
+.vf-grid .v{width:1px;top:7%;bottom:7%}
+.vf-grid .h{height:1px;left:7%;right:7%}
+.vf-brackets i{position:absolute;width:26px;height:26px;border:2.5px solid rgba(240,235,222,.85)}
+.vf-brackets i:nth-child(1){top:14px;left:14px;border-right:none;border-bottom:none;border-radius:6px 0 0 0}
+.vf-brackets i:nth-child(2){top:14px;right:14px;border-left:none;border-bottom:none;border-radius:0 6px 0 0}
+.vf-brackets i:nth-child(3){bottom:14px;left:14px;border-right:none;border-top:none;border-radius:0 0 0 6px}
+.vf-brackets i:nth-child(4){bottom:14px;right:14px;border-left:none;border-top:none;border-radius:0 0 6px 0}
+.vf-ts{position:absolute;bottom:18px;left:16px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;
+  color:var(--dpaper);background:rgba(20,19,16,.66);padding:5px 9px;border-radius:6px;border:1px solid rgba(240,235,222,.25)}
+.vf-state{position:absolute;top:16px;left:16px;display:flex;align-items:center;gap:7px;font-family:var(--mono);
+  font-size:10px;letter-spacing:.2em;color:var(--dpaper);background:rgba(20,19,16,.62);padding:6px 10px;
+  border-radius:6px;border:1px solid rgba(240,235,222,.25)}
+.vf-state i{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:blink 1.2s steps(2) infinite}
+.vf-state.cap i{background:var(--dpaper);animation:none}
+@keyframes blink{50%{opacity:.12}}
+.flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:3}
+.flash.go{animation:flash .3s}
+@keyframes flash{12%{opacity:.92}100%{opacity:0}}
+.cam-error{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:15px;text-align:center;background:rgba(11,10,8,.92);padding:26px}
+.cam-error svg{color:var(--accent)}
+.cam-error p{font-size:14px;line-height:1.7;color:rgba(240,235,222,.85);max-width:270px}
+.cam-err-actions{display:flex;gap:10px}
+.cam-bottom{padding:12px 18px calc(15px + env(safe-area-inset-bottom))}
+.file-alt{display:flex;align-items:center;gap:7px;margin:0 auto 13px;background:none;border:none;
+  color:rgba(240,235,222,.55);font-size:12.5px;text-decoration:underline dotted;text-underline-offset:3px}
+.file-alt:hover{color:rgba(240,235,222,.85)}
+.shuttle-row{display:flex;align-items:center;justify-content:center;height:86px}
+.shutter{width:76px;height:76px;border-radius:50%;border:4px solid var(--dpaper);background:transparent;
+  display:grid;place-items:center}
+.shutter span{width:58px;height:58px;border-radius:50%;background:var(--dpaper);transition:transform .12s,background .12s}
+.shutter:active span{transform:scale(.82);background:var(--accent)}
+.cam-actions{display:flex;gap:11px}
+.cam-actions .btn-ghost{flex:1}.cam-actions .btn-paper{flex:1.5}
+
+/* ---------- 5) หน้า Confirm ---------- */
+.confirm-body{padding:22px 20px calc(26px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:18px}
+.photo-card{background:#FDFCF7;border:1.5px solid var(--ink);border-radius:7px;padding:10px 10px 12px;
+  box-shadow:5px 5px 0 var(--ink);transform:rotate(-1.2deg)}
+.ph-wrap{position:relative}
+.ph-wrap img{width:100%;border-radius:3px;border:1px solid var(--line)}
+.photo-ts{position:absolute;bottom:9px;left:9px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;
+  color:var(--dpaper);background:rgba(20,19,16,.7);padding:4px 8px;border-radius:5px}
+.ph-caption{display:flex;justify-content:space-between;align-items:center;padding:10px 3px 0}
+.ph-caption .tag{letter-spacing:.2em}
+.sum-card{background:var(--card);border:1.5px solid var(--ink);border-radius:15px;overflow:hidden}
+.srow{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:13px 17px;
+  border-bottom:1.5px dashed var(--line-2);font-size:15px}
+.srow:last-child{border-bottom:none}
+.srow .k{font-size:13px;font-weight:500;color:var(--ink-2)}
+.srow .v{font-weight:700;text-align:right}
+.srow .v.mono{font-family:var(--mono);font-weight:500;font-size:14px}
+.payload-card{background:var(--ink);border-radius:15px;padding:14px 16px 16px;color:#E9E3D2}
+.payload-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.payload-head .lbl{color:rgba(233,227,210,.65)}
+.payload-head .lbl::before{background:var(--accent)}
+.payload{font-family:var(--mono);font-size:13px;line-height:2;white-space:pre-wrap;user-select:all}
+.confirm-actions{display:flex;gap:11px;flex-wrap:wrap}
+.confirm-actions .btn-ghost{flex:1 1 100%}
+.confirm-actions .btn-channel{flex:1 1 calc(50% - 6px);min-width:0}
+
+/* ---------- 6) หน้า Success ---------- */
+.success-wrap{min-height:100%;display:flex;flex-direction:column;align-items:center;text-align:center;
+  padding:64px 26px calc(26px + env(safe-area-inset-bottom))}
+.stamp-zone{position:relative;height:172px;display:grid;place-items:center;margin-bottom:10px}
+.stamp{position:relative;display:inline-flex;flex-direction:column;align-items:center;gap:1px;
+  border:3px solid var(--accent);color:var(--accent);border-radius:10px;padding:15px 30px 13px;
+  transform:rotate(-7deg);mix-blend-mode:multiply;opacity:.92}
+.stamp::before{content:'';position:absolute;inset:5px;border:1.5px solid var(--accent);border-radius:6px}
+.stamp-top{font-family:var(--mono);font-size:10px;letter-spacing:.34em;font-weight:600}
+.stamp-main{font-size:36px;font-weight:700;line-height:1.15;margin:3px 0 1px}
+.stamp-sub{font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;font-weight:600;
+  border-top:1.5px solid var(--accent);padding-top:5px;margin-top:5px}
+.stamp.in{animation:stampIn .55s cubic-bezier(.3,1.35,.45,1) both}
+@keyframes stampIn{
+  0%{transform:scale(2.5) rotate(-19deg);opacity:0}
+  55%{transform:scale(.94) rotate(-6.5deg);opacity:.92}
+  75%{transform:scale(1.05) rotate(-7.5deg)}
+  100%{transform:scale(1) rotate(-7deg);opacity:.92}}
+#scr-success.thud{animation:thud .32s .26s}
+@keyframes thud{30%{transform:translateY(4px) scale(.995)}60%{transform:translateY(-2px)}}
+.debris{position:absolute;background:var(--accent);opacity:0}
+.debris.d1{width:9px;height:9px;top:18px;right:34px;transform:rotate(18deg)}
+.debris.d2{width:6px;height:6px;bottom:22px;left:40px;transform:rotate(-24deg);background:var(--ink)}
+.debris.d3{width:7px;height:7px;bottom:10px;right:70px;transform:rotate(40deg)}
+.debris.in{animation:debris .4s .5s cubic-bezier(.2,.9,.3,1) both}
+@keyframes debris{from{opacity:0;transform:scale(2) rotate(0)}to{opacity:.85}}
+.succ-ts{font-family:var(--mono);font-size:12px;letter-spacing:.18em;color:var(--ink-2);margin-top:14px}
+.succ-line{font-size:16px;font-weight:700;margin-top:7px}
+.succ-note{font-size:13px;line-height:1.7;color:var(--ink-2);margin-top:10px;max-width:280px}
+.payload-mini{width:100%;margin-top:22px}
+.payload-mini .payload{background:var(--ink);color:#E9E3D2;border-radius:13px;padding:14px 15px;text-align:left}
+.payload-mini .mini-btn{margin-top:11px}
+#btnHome{margin-top:auto;padding-top:26px}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="side-label l">NOC OPS · DAILY CHECK-IN</div>
+  <div class="side-label r">CLOUD OPERATION SUPPORT</div>
+
+  <div class="phone" id="phone">
+
+    <!-- 1) LOGIN -->
+    <section class="screen active" id="scr-login">
+      <div class="login-wrap">
+        <div class="brand-tag">NOC · CLOUD OPERATION SUPPORT</div>
+        <img src="ac3.png" alt="คำอธิบายรูปภาพ" class="logo-img">
+        <h2 class="wordmark"> Accès <span class="chop"></span></h2>
+        <div class="wordmark-sub">Less friction. More focus</div>
+        <div class="punch-strip" id="punchStrip"></div>
+        <div class="punch-caption" id="punchCaption"></div>
+
+        <div class="login-fields">
+          <div class="field">
+            <label class="lbl">รหัสทีม <span class="req">*</span></label>
+            <input id="inpCode" class="text-input" type="password" autocomplete="current-password"
+                   placeholder="กรอกรหัสทีม (สอบถามหัวหน้า)" style="margin-top:11px">
+          </div>
+          <div class="field">
+            <label class="lbl">ชื่อผู้ใช้งาน <span class="req">*</span></label>
+            <div id="ddLoginName" style="margin-top:11px"></div>
+          </div>
+          <button class="btn-primary" id="btnLogin"><i data-icon="lock" data-size="16"></i>Log in 
+          </button>
+        </div>
+        <div class="login-foot">TEAM BUILD · CENTRAL LOG</div>
+      </div>
+    </section>
+
+    <!-- 2) HOME / DASHBOARD -->
+    <section class="screen" id="scr-home">
+      <header class="topbar">
+        <div class="topbar-id">
+          <span class="tag">NOC / CHECK-IN</span>
+          <div class="topbar-user" id="homeUser">—</div>
+        </div>
+        <button class="icon-btn" id="btnLogout" title="ออกจากระบบ" aria-label="ออกจากระบบ"><i data-icon="log-out"></i></button>
+      </header>
+      <div class="home-body">
+        <div class="clock-block">
+          <div class="cb-date" data-date-thai>—</div>
+          <div class="cb-time" data-clock>--:--:--</div>
+          <div class="cb-shift"><span class="cb-dot" id="cbDot"></span><span id="shiftHint">—</span></div>
+        </div>
+
+        <div class="today-card" id="todayCard"></div>
+
+        <button class="cta-checkin" id="btnCheckin">
+          <span class="cta-txt"><b>รายงานตัวเลย</b><span class="mono">CHECK-IN NOW</span></span>
+          <span class="cta-ic"><i data-icon="camera" data-size="22"></i></span>
+        </button>
+
+        <div class="hist-head">
+          <span class="lbl">ทีมวันนี้</span>
+          <span class="hist-count" id="teamCount">0 คน</span>
+        </div>
+        <div class="hist-list" id="teamList"></div>
+
+        <div class="hist-head">
+          <span class="lbl">ประวัติล่าสุด</span>
+          <span class="hist-count" id="histCount">0 รายการ</span>
+        </div>
+        <div class="hist-list" id="histList"></div>
+      </div>
+    </section>
+
+    <!-- 3) CHECK-IN FORM -->
+    <section class="screen" id="scr-form">
+      <header class="topbar">
+        <button class="icon-btn" data-back="home" aria-label="ย้อนกลับ"><i data-icon="arrow-left"></i></button>
+        <div class="topbar-title">ข้อมูลผู้รายงาน</div>
+        <span class="step-tag">STEP 1/3</span>
+      </header>
+      <div class="form-body">
+        <div class="form-card">
+          <div class="fc-head"><span class="lbl">ข้อมูลผู้รายงาน</span><span class="tag">FORM · F-01</span></div>
+          <div class="frow">
+            <label class="lbl">ชื่อ (Name) <span class="req">*</span></label>
+            <div id="ddName"></div>
+          </div>
+          <div class="frow">
+            <label class="lbl">เวลาทำงาน (Shift) <span class="req">*</span></label>
+            <div id="ddShift"></div>
+          </div>
+          <div class="frow">
+            <label class="lbl">ตำแหน่ง (Role)</label>
+            <div class="fixed-val"><i data-icon="lock" data-size="16"></i>NOC Engineer<span class="fx-tag">FIXED</span></div>
+          </div>
+          <div class="frow">
+            <label class="lbl">โปรเจกต์ (Project)</label>
+            <div class="fixed-val"><i data-icon="lock" data-size="16"></i>Cloud Operation Support<span class="fx-tag">FIXED</span></div>
+          </div>
+          <div class="frow">
+            <label class="lbl">สถานะการทำงาน (Status) <span class="req">*</span></label>
+            <div id="ddStatus"></div>
+          </div>
+        </div>
+        <p class="form-note"><i data-icon="clock" data-size="17"></i>ระบบจะบันทึกวัน-เวลาอัตโนมัติเมื่อกดส่่งรายงาน และต้งองแนบรูปถ่ายจากกล้องทุกครั้ง</p>
+        <button class="btn-primary" id="btnToCamera"><i data-icon="camera" data-size="20"></i>ถ่ายรูปประกอบรายงาน</button>
+      </div>
+    </section>
+
+    <!-- 4) CAMERA -->
+    <section class="screen dark" id="scr-camera">
+      <div class="cam-top">
+        <button class="icon-btn dark" data-back="form" aria-label="ย้อนกลับ"><i data-icon="arrow-left"></i></button>
+        <div class="cam-title"><span id="camTitleText">ถ่ายรูปรายงานตัว</span><span class="tag" id="camStep">STEP 2/3 · VIEWFINDER</span></div>
+        <button class="icon-btn dark" id="btnFlip" title="สลับกล้อง" aria-label="สลับกล้อง"><i data-icon="refresh-cw"></i></button>
+      </div>
+      <div class="cam-stage">
+        <video id="camVideo" autoplay playsinline muted></video>
+        <img id="camFrozen" class="hidden" alt="รูปที่ถ่าย">
+        <div class="vf-grid" id="vfGrid"><i class="v" style="left:33.33%"></i><i class="v" style="left:66.66%"></i><i class="h" style="top:33.33%"></i><i class="h" style="top:66.66%"></i></div>
+        <div class="vf-brackets"><i></i><i></i><i></i><i></i></div>
+        <div class="vf-state" id="vfState"><i></i><span>LIVE</span></div>
+        <div class="vf-ts" id="vfTs">--:--:--</div>
+        <div class="flash" id="flash"></div>
+        <div class="cam-error hidden" id="camError">
+          <i data-icon="alert" data-size="34"></i>
+          <p id="camErrMsg"></p>
+          <div class="cam-err-actions">
+            <button class="mini-btn ondark" id="btnRetryCam">ลองใหม่</button>
+            <button class="mini-btn ondark" id="btnFileErr">เลือกไฟล์รูปแทน</button>
+          </div>
+        </div>
+      </div>
+      <div class="cam-bottom">
+        <button class="file-alt" id="btnFileAlt"><i data-icon="image" data-size="15"></i>แนบรูปจากไฟล์แทน (กรณีไม่มีกล้อง)</button>
+        <div class="shuttle-row" id="shuttleWrap">
+          <button class="shutter" id="btnShutter" aria-label="ถ่ายรูป"><span></span></button>
+        </div>
+        <div class="cam-actions hidden" id="camActions">
+          <button class="btn-ghost dark" id="btnRetake">ถ่ายใหม่</button>
+          <button class="btn-paper" id="btnUseShot">ใช้รูปนี้</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5) CONFIRMATION -->
+    <section class="screen" id="scr-confirm">
+      <header class="topbar">
+        <button class="icon-btn" data-back="camera" aria-label="ย้อนกลับ"><i data-icon="arrow-left"></i></button>
+        <div class="topbar-title" id="cfTitle">ตรวจสอบก่อนบันทึก</div>
+        <span class="step-tag">STEP 3/3</span>
+      </header>
+      <div class="confirm-body">
+        <div class="photo-card">
+          <div class="ph-wrap">
+            <img id="cfPhoto" alt="รูปประกอบรายงาน">
+            <span class="photo-ts" id="cfShotTs">SHOT --:--:--</span>
+          </div>
+          <div class="ph-caption">
+            <span class="tag">PHOTO · ATTACHED</span>
+            <button class="mini-btn" id="btnRetakeMini"><i data-icon="camera" data-size="14"></i>ถ่ายใหม่</button>
+          </div>
+        </div>
+
+        <div class="sum-card">
+          <div class="fc-head"><span class="lbl">สรุปข้อมูลทั้งหมด</span><span class="tag">SUMMARY</span></div>
+          <div class="srow"><span class="k">Name</span><span class="v" id="cfName">—</span></div>
+          <div class="srow"><span class="k">Role</span><span class="v">NOC Engineer</span></div>
+          <div class="srow"><span class="k">Shift</span><span class="v mono" id="cfShift">—</span></div>
+          <div class="srow"><span class="k">Project</span><span class="v">Cloud Operation Support</span></div>
+          <div class="srow"><span class="k">Status</span><span class="v" id="cfStatus">—</span></div>
+          <div class="srow hidden" id="cfInRow"><span class="k">เข้างาน (Check-in)</span><span class="v mono" id="cfInTime">—</span></div>
+          <div class="srow"><span class="k">เวลาที่บันทึก (อัตโนมัติ)</span><span class="v mono" data-clock>--:--:--</span></div>
+        </div>
+
+        <div class="payload-card">
+          <div class="payload-head">
+            <span class="lbl">ข้อความที่จะส่ง</span>
+            <button class="mini-btn ondark" id="btnCopyPayload"><i data-icon="copy" data-size="14"></i>คัดลอกข้อความและรูป</button>
+          </div>
+          <pre class="payload" id="cfPayload"></pre>
+        </div>
+
+        <div class="confirm-actions">
+          <button class="btn-ghost" data-back="form">แก้ไขข้อมูล</button>
+          <button class="btn-accent btn-channel" id="btnSendDiscord">ส่งเข้า Discord</button>
+          <button class="btn-accent btn-channel" id="btnSendTeams">ส่งเข้า Microsoft Teams</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6) SUCCESS -->
+    <section class="screen" id="scr-success">
+      <div class="success-wrap">
+        <div class="stamp-zone">
+          <span class="debris d1"></span><span class="debris d2"></span><span class="debris d3"></span>
+          <div class="stamp" id="stamp">
+            <span class="stamp-top">NOC OPS</span>
+            <span class="stamp-main" id="stampMain">รายงานเข้า</span>
+            <span class="stamp-sub" id="stampSub">CHECKED-IN</span>
+          </div>
+        </div>
+        <div class="succ-ts" id="succTs">—</div>
+        <div class="succ-line" id="succLine">—</div>
+        <p class="succ-note" id="succNote">บันทึกเวลาและรูปถ่ายไว้ในฐานข้อมูลกลางแล้ว</p>
+        <div class="payload-mini">
+          <pre class="payload" id="succPayload"></pre>
+          <button class="mini-btn" id="btnCopy2"><i data-icon="copy" data-size="14"></i>คัดลอกข้อความรายงาน</button>
+        </div>
+        <button class="btn-primary" id="btnHome">กลับหน้าหลัก</button>
+      </div>
+    </section>
+
+    <!-- โอเวอร์เลย์: ชีตดรอปดาวน์ / โมดัล / toast -->
+    <div id="overlay-root"><div class="toast-wrap" id="toastWrap"></div></div>
+  </div>
+
+  <div class="stage-note">TEAM BUILD · บันทึกเข้า/ออกงานลงฐานข้อมูลกลาง และแจ้งเตือนผ่าน Discord หรือ Microsoft Teams</div>
+</div>
+
+<input type="file" id="fileInput" accept="image/*" capture="environment" hidden>
+
+<script>
+(function(){
+'use strict';
+/* ============ ค่าคงที่ตามข้อกำหนด ============ */
+const NAMES = ["Apisith  Kogram", "Phanuphong Lachantha", "Phanuwat Keawon", "Phudtan Sodsai", "Pipatpong Srisara", "Prapatsorn Sodjaimai", "Sasiwan Laohapornsvan", "Supaporn Khumsombat", "Thanachot Phuttiwarakul", "Tinapat Sangdang"]; // เพิ่มรายชื่อได้ในอนาคตที่นี่
+const SHIFTS=[
+  {v:'07.00-19.00',label:'07.00 – 19.00',sub:'กะเช้า · 12 ชั่วโมง'},
+  {v:'08.00-20.00',label:'08.00 – 20.00',sub:'กะบ้าย · 12 ชั่วโมง'},
+  {v:'19.00-07.00',label:'19.00 – 07.00',sub:'กะดึก · 12 ชั่วโมง'},
+  {v:'20.00-08.00',label:'20.00 – 08.00',sub:'กะดึก · 12 ชั่วโมง'}
+];
+const STATUSES=[
+  {v:'On-site',label:'On-site',sub:'ปฏิบัติงาน ณ ศูนย์ปฏิบัติการ'},
+  {v:'Remote-work',label:'Remote-work',sub:'ปฏิบัติงานทางไกล'}
+];
+const ROLE='NOC Engineer', PROJECT='Cloud Operation Support';
+const DISCORD_WEBHOOK_URL='https://discord.com/api/webhooks/1549379114459340882/6YJ89tL_jhobHBz2aHQjHEq6TtGYJ6JhoP1Dt_Tw-Qu7c0EDEVYc20khyYY8t0E_ccvS';
+const TEAMS_WEBHOOK_URL='https://default45be8033beb74d4bab77608ee11e64.49.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/16/workflows/2a7888e641ea441083282341ae400752/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=ERUCHpeSsIR1WPFcoMWUPQp_yMApUlk-vYVCPVi8g8M';
+const CODE_KEY='noc_team_code', SESS='noc_checkin_session_v1';
+
+/* ============ ตัวช่วยทั่วไป ============ */
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+const pad=n=>String(n).padStart(2,'0');
+const ENM=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+const fmtClock=(d=new Date())=>pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
+const fmtHM=(ts)=>{const d=new Date(ts);return pad(d.getHours())+':'+pad(d.getMinutes())};
+const fmtShortTs=ts=>{const d=new Date(ts);return pad(d.getDate())+' '+ENM[d.getMonth()]+' · '+pad(d.getHours())+':'+pad(d.getMinutes())};
+const fmtFullTs=ts=>{const d=new Date(ts);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+fmtClock(d)};
+const thFullDate=(d=new Date())=>new Intl.DateTimeFormat('th-TH',{dateStyle:'full'}).format(d);
+const sameDay=(a,b=new Date())=>{const x=new Date(a);return x.getFullYear()===b.getFullYear()&&x.getMonth()===b.getMonth()&&x.getDate()===b.getDate()};
+const store=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}};
+const load=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}};
+const elFromHTML=h=>{const t=document.createElement('div');t.innerHTML=h.trim();return t.firstElementChild};
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const durText=(a,b)=>{const ms=Math.max(0,new Date(b)-new Date(a));const h=Math.floor(ms/3600000),m=Math.round((ms%3600000)/60000);return h+' ชม. '+pad(m)+' น.'};
+
+/* ============ ชุดไอคอน (SVG ในไฟล์ ไม่พึ่ง CDN) ============ */
+const ICONS={
+ 'arrow-left':'<path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>',
+ 'camera':'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>',
+ 'image':'<rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>',
+ 'chevron-down':'<path d="m6 9 6 6 6-6"/>',
+ 'log-out':'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/>',
+ 'refresh-cw':'<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
+ 'copy':'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>',
+ 'trash':'<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+ 'x':'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+ 'alert':'<circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/>',
+ 'check':'<path d="M20 6 9 17l-5-5"/>',
+ 'check-circle':'<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+ 'lock':'<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+ 'clock':'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+ 'delete':'<path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Z"/><path d="m18 9-6 6"/><path d="m12 9 6 6"/>'
+};
+const icon=(n,s=18)=>'<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+ICONS[n]+'</svg>';
+ $$('[data-icon]').forEach(n=>n.innerHTML=icon(n.dataset.icon,n.dataset.size||18));
+
+/* ============ สถานะแอป ============ */
+const state={user:null,code:null,mode:'in',name:null,shift:null,status:null,photo:null,thumb:null,photoTs:null,
+  teamToday:[],recent:[],myOpen:null,myLast:null,lastRecord:null,lastNotified:null};
+let busyLogin=false;
+const camCtl={stream:null,facing:'user'};
+
+/* ============ เรียก API (ต้องมีรหัสทีม) ============ */
+function onUnauthorized(){
+  state.code=null;
+  try{localStorage.removeItem(CODE_KEY)}catch(e){}
+  paintCodeField();
+  if(currentId!=='login'){
+    toast('รหัสทีมไม่ถูกต้องหรือถูกเปลี่ยน กรุณาเข้าสู่ระบบใหม่','err');
+    go('login',-1);
+  }
+}
+async function api(path,opts={}){
+  const headers={'x-team-code':state.code||''};
+  if(opts.body!==undefined)headers['content-type']='application/json';
+  let res;
+  try{
+    res=await fetch(path,{method:opts.method||'GET',headers,cache:'no-store',
+      body:opts.body!==undefined?JSON.stringify(opts.body):undefined});
+  }catch(err){
+    const e=new Error('เชื่อมต่อเซิร์ฟเวอร์ไม่ได้');e.offline=true;throw e;
+  }
+  if(res.status===401){onUnauthorized();const e=new Error('unauthorized');e.unauthorized=true;throw e}
+  let data=null;
+  try{data=await res.json()}catch(e){}
+  if(!res.ok){
+    const e=new Error((data&&data.error)||('HTTP '+res.status));
+    e.status=res.status;e.data=data;throw e;
+  }
+  return data;
+}
+
+/* ============ Toast ============ */
+function toast(msg,type='info'){
+  const t=elFromHTML('<div class="toast '+type+'">'+icon(type==='ok'?'check-circle':'alert',18)+'<span>'+esc(msg)+'</span></div>');
+  $('#toastWrap').appendChild(t);
+  requestAnimationFrame(()=>t.classList.add('show'));
+  setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),300)},2600);
+}
+
+/* ============ คัดลอกข้อความ ============ */
+async function copyText(t){
+  try{await navigator.clipboard.writeText(t);toast('คัดลอกข้อความแล้ว','ok');return}catch(e){}
+  const ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;opacity:0';
+  document.body.appendChild(ta);ta.select();
+  try{document.execCommand('copy');toast('คัดลอกข้อความแล้ว','ok')}
+  catch(_){toast('คัดลอกไม่สำเร็จ','err')}
+  ta.remove();
+}
+async function copyReport(text,photo){
+  if(photo&&navigator.clipboard&&window.ClipboardItem){
+    try{
+      const imageBlob=await (await fetch(photo)).blob();
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          [imageBlob.type||'image/jpeg']:imageBlob,
+          'text/plain':new Blob([text],{type:'text/plain'})
+        })
+      ]);
+      toast('คัดลอกข้อความและรูปภาพแล้ว','ok');
+      return;
+    }catch(error){
+      console.warn('Copying report image failed, using text fallback:',error);
+    }
+  }
+  await copyText(text);
+}
+
+/* ============ ดรอปดาวน์แบบ bottom-sheet ============ */
+let activeClose=null;
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&activeClose)activeClose()});
+function makeDD(sel,opt){
+  const mount=typeof sel==='string'?$(sel):sel;
+  let value=opt.value??null, openFl=false;
+  mount.classList.add('dd');
+  mount.innerHTML='<button type="button" class="dd-btn '+(opt.dark?'dd-dark':'')+'"><span class="dd-val"></span>'+icon('chevron-down',20)+'</button>';
+  const btn=mount.querySelector('.dd-btn');
+  const paint=()=>{
+    const o=opt.options.find(x=>x.v===value);
+    btn.querySelector('.dd-val').innerHTML=o?'<b>'+esc(o.label)+'</b>':'<span class="ph">'+esc(opt.placeholder||'เลือก')+'</span>';
+    mount.classList.remove('invalid');
+  };
+  paint();
+  function open(){
+    if(openFl)return; openFl=true; btn.classList.add('open');
+    const bd=elFromHTML('<div class="dd-backdrop"></div>');
+    const sheet=elFromHTML('<div class="dd-sheet"><div class="grab"></div>'+
+      '<div class="dd-head"><span class="lbl">'+esc(opt.label)+'</span><button class="icon-btn sm">'+icon('x',16)+'</button></div>'+
+      '<div class="dd-opts">'+opt.options.map(o=>
+        '<button type="button" class="dd-opt'+(o.v===value?' sel':'')+'" data-v="'+esc(o.v)+'">'+
+        '<span><b>'+esc(o.label)+'</b>'+(o.sub?'<small>'+esc(o.sub)+'</small>':'')+'</span>'+
+        (o.v===value?'<span class="dd-check">'+icon('check',17)+'</span>':'')+'</button>').join('')+
+      '</div></div>');
+    $('#overlay-root').append(bd,sheet);
+    requestAnimationFrame(()=>{bd.classList.add('show');sheet.classList.add('open')});
+    const close=()=>{if(!openFl)return;openFl=false;btn.classList.remove('open');activeClose=null;
+      bd.classList.remove('show');sheet.classList.remove('open');
+      setTimeout(()=>{bd.remove();sheet.remove()},330)};
+    activeClose=close;
+    bd.onclick=close; sheet.querySelector('.dd-head .icon-btn').onclick=close;
+    sheet.querySelectorAll('.dd-opt').forEach(b=>b.onclick=()=>{
+      value=b.dataset.v;paint();close();opt.onChange&&opt.onChange(value);
+    });
+  }
+  btn.onclick=open;
+  return{
+    get value(){return value},
+    set(v){value=v;paint()},
+    flash(){mount.classList.add('invalid');setTimeout(()=>mount.classList.remove('invalid'),1600)}
+  };
+}
+
+/* ============ โมดัล ============ */
+function openModal(inner){
+  const bd=elFromHTML('<div class="modal-bd"></div>');
+  const m=elFromHTML('<div class="modal">'+inner+'</div>');
+  $('#overlay-root').append(bd,m);
+  requestAnimationFrame(()=>{bd.classList.add('show');m.classList.add('show')});
+  let closed=false;
+  const close=()=>{if(closed)return;closed=true;activeClose=null;
+    bd.classList.remove('show');m.classList.remove('show');
+    setTimeout(()=>{bd.remove();m.remove()},280)};
+  activeClose=close; bd.onclick=close;
+  m.querySelectorAll('[data-close]').forEach(b=>b.onclick=close);
+  return{close,root:m};
+}
+
+/* ============ เราเตอร์หน้าจอ ============ */
+let current=$('#scr-login'), currentId='login';
+const hooks={
+  home:{enter(){renderHome();refresh()}},
+  form:{enter(){state.mode='in';if(!state.name){state.name=state.user;ddName.set(state.user)}}},
+  camera:{enter:enterCamera,leave:leaveCamera},
+  confirm:{enter:renderConfirm},
+  success:{enter:renderSuccess}
+};
+function go(id,dir=1){
+  const next=$('#scr-'+id);
+  if(current===next)return;
+  if(hooks[currentId]&&hooks[currentId].leave)hooks[currentId].leave();
+  next.classList.add(dir>0?'pre-r':'pre-l');
+  next.getBoundingClientRect(); // บังคับ reflow
+  next.classList.remove('pre-r','pre-l');
+  next.classList.add('active');
+  if(current){
+    current.classList.remove('active');
+    current.classList.add(dir>0?'away-l':'away-r');
+    setTimeout(()=>current.classList.remove('away-l','away-r'),430);
+  }
+  current=next;currentId=id;next.scrollTop=0;
+  if(hooks[id]&&hooks[id].enter)hooks[id].enter();
+}
+ $$('[data-back]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.back,-1)));
+
+/* ============ นาฬิกา (เดินสดทุกหน้า) ============ */
+function shiftHintUpdate(now){
+  const h=now.getHours(),el=$('#shiftHint'),dot=$('#cbDot');
+  let t,cls;
+  if(h>=7&&h<19){t='อยู่ในช่วงกะ 7.00 – 19.00';cls='on'}
+  else if(h>=8&&h<20){t='อยู่ในช่วงกะ 8.00 – 20.00';cls='on'}
+  else{t='อยู่นอกช่วงกะที่กำหนด';cls='off'}
+  if(el)el.textContent=t; if(dot)dot.className='cb-dot '+cls;
+}
+function tick(){
+  const now=new Date();
+  $$('[data-clock]').forEach(n=>n.textContent=fmtClock(now));
+  $$('[data-date-thai]').forEach(n=>n.textContent=thFullDate(now));
+  const vf=$('#vfTs'); if(vf)vf.textContent=fmtFullTs(now);
+  shiftHintUpdate(now);
+}
+tick(); setInterval(tick,500);
+
+/* ============ Login : รหัสทีม + ชื่อผู้ใช้ ============ */
+(function buildPunch(){
+  const d=new Date();
+  $('#punchCaption').textContent='TODAY'+d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+})();
+
+const ddLogin=makeDD('#ddLoginName',{label:'เลือกชื่อผู้ใช้งาน',options:NAMES.map(n=>({v:n,label:n})),placeholder:'เลือกชื่อ'});
+const inpCode=$('#inpCode');
+function paintCodeField(){
+  let saved=null;
+  try{saved=localStorage.getItem(CODE_KEY)}catch(e){}
+  inpCode.value=saved||'';
+}
+paintCodeField();
+
+$('#btnLogin').onclick=async()=>{
+  if(busyLogin)return;
+  if(!ddLogin.value){toast('กรุณาเลือกชื่อผู้ใช้งาน','err');ddLogin.flash();return}
+  const code=(inpCode.value||'').trim();
+  if(!code){toast('กรุณากรอกรหัสทีม','err');inpCode.focus();ddLogin.flash();return}
+  busyLogin=true;
+  const btn=$('#btnLogin'), label=btn.innerHTML;
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span>กำลังเข้าสู่ระบบ…';
+  try{
+    await api('/api/session',{method:'POST',body:{code}});
+    state.code=code;
+    try{localStorage.setItem(CODE_KEY,code)}catch(e){}
+    state.user=ddLogin.value;
+    store(SESS,{name:state.user,at:Date.now()});
+    resetDraft();
+    toast('ยินดีต้อนรับ'+state.user,'ok');
+    go('home');
+  }catch(err){
+    if(err.offline)toast('เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ กรุณาลองใหม่','err');
+    else toast('รหัสทีมไม่ถูกต้อง','err');
+    ddLogin.flash();
+  }finally{
+    busyLogin=false; btn.disabled=false; btn.innerHTML=label;
+  }
+};
+ $('#btnLogout').onclick=()=>{
+  try{localStorage.removeItem(SESS)}catch(e){}
+  state.user=null;state.myOpen=null;state.myLast=null;state.teamToday=[];state.recent=[];
+  ddLogin.set(null);paintCodeField();
+  toast('ออกจากระบบแล้ว','ok');
+  go('login',-1);
+};
+
+/* ============ Home / Dashboard ============ */
+function recRow(r){
+  const mine=r.name===state.user, out=!!r.checkOutAt;
+  return '<button class="hist-row" data-id="'+esc(r.id)+'">'+
+    '<img class="hist-thumb" src="'+(r.thumbIn||'')+'" alt="">'+
+    '<div class="hist-mid"><div class="hist-name">'+esc(r.name)+(mine?'<span class="hist-shift">คุณ</span>':'')+'</div>'+
+    '<div class="hist-meta">IN '+fmtHM(r.checkInAt)+(out?' · OUT '+fmtHM(r.checkOutAt):' · ยังไม่ลงออก')+'</div></div>'+
+    '<span class="chip '+(r.status==='On-site'?'st-on':'st-rm')+'"><i></i>'+esc(r.status)+'</span></button>';
+}
+function renderHome(){
+  $('#homeUser').textContent=state.user||'—';
+  const mine=state.teamToday.filter(r=>r.name===state.user);
+  const open=mine.find(r=>!r.checkOutAt)||null;
+  const last=mine.length?mine[mine.length-1]:null;
+  state.myOpen=open; state.myLast=last;
+
+  const tc=$('#todayCard');
+  if(!last){
+    tc.classList.remove('done');
+    tc.innerHTML='<div><div class="tc-title">ยังไม่ได้รายงานตัววันนี้</div>'+
+      '<div class="tc-meta">กดปุ่มด้านล่างเพื่อเริ่มรายงานตัว</div></div>'+
+      '<span class="tc-icon">'+icon('clock',24)+'</span>';
+  }else if(open){
+    tc.classList.add('done');
+    tc.innerHTML='<div><div class="tc-title ok">เข้าเวรแล้ว '+fmtHM(open.checkInAt)+'</div>'+
+      '<div class="tc-meta">'+fmtShortTs(open.checkInAt)+' · รอลงเวลาออก</div></div>'+
+      '<span class="mini-stamp">ON DUTY</span>';
+  }else{
+    tc.classList.add('done');
+    tc.innerHTML='<div><div class="tc-title ok">ลงเวลาออกแล้ว</div>'+
+      '<div class="tc-meta">IN '+fmtHM(last.checkInAt)+' · OUT '+fmtHM(last.checkOutAt)+' · '+durText(last.checkInAt,last.checkOutAt)+'</div></div>'+
+      '<span class="mini-stamp">DONE</span>';
+  }
+
+  const cta=$('#btnCheckin');
+  if(open){
+    cta.innerHTML='<span class="cta-txt"><b>ลงเวลาออกงาน</b><span class="mono">CHECK-OUT NOW</span></span><span class="cta-ic">'+icon('log-out',22)+'</span>';
+  }else{
+    cta.innerHTML='<span class="cta-txt"><b>รายงานตัวเข้า</b><span class="mono">CHECK-IN NOW</span></span><span class="cta-ic">'+icon('camera',22)+'</span>';
+  }
+
+  const team=state.teamToday;
+  $('#teamCount').textContent=team.length+' คน';
+  $('#teamList').innerHTML=team.length?team.map(recRow).join(''):
+    '<div class="empty">'+icon('clock',30)+'<p>วันนี้ยังไม่มีใครรายงานตัว</p></div>';
+
+  $('#histCount').textContent=state.recent.length+' รายการ';
+  $('#histList').innerHTML=state.recent.length?state.recent.map(recRow).join(''):
+    '<div class="empty">'+icon('image',30)+'<p>ยังไม่มีประวัติการรายงาน<br>รายงานตัวครั้งแรกของคุณวันนี้เลย</p></div>';
+
+  $$('#teamList .hist-row,#histList .hist-row').forEach(b=>b.onclick=()=>openRecord(b.dataset.id));
+}
+async function loadData(){
+  const [day,recent]=await Promise.all([api('/api/attendance'),api('/api/recent?limit=20')]);
+  state.teamToday=day.records||[];
+  state.recent=recent.records||[];
+}
+async function refresh(){
+  try{
+    await loadData();
+    renderHome();
+  }catch(err){
+    if(!err.unauthorized)toast(err.offline?'เชื่อมต่อเซิร์ฟเวอร์ไม่ได้':'โหลดข้อมูลไม่สำเร็จ','err');
+  }
+}
+ $('#btnCheckin').onclick=()=>{
+  if(state.myOpen){startCheckout()}
+  else{state.mode='in';go('form')}
+};
+async function openRecord(id){
+  let rec;
+  try{rec=(await api('/api/attendance/'+encodeURIComponent(id))).record}
+  catch(err){if(!err.unauthorized)toast('เปิดรายการไม่สำเร็จ','err');return}
+  const block=(src,label)=>src?'<div class="tag" style="padding:10px 15px 4px">'+label+'</div><div class="modal-ph"><img src="'+src+'" alt=""></div>':'';
+  const {close}=openModal(
+    '<div class="modal-head"><span class="lbl">'+esc(rec.name)+' · '+fmtShortTs(rec.checkInAt)+'</span>'+
+    '<button class="icon-btn sm" data-close>'+icon('x',16)+'</button></div>'+
+    block(rec.photoIn,'PHOTO · CHECK-IN')+
+    block(rec.photoOut,'PHOTO · CHECK-OUT')+
+    '<pre class="payload" style="margin:13px 15px 2px">'+esc(payloadText(rec))+'</pre>'+
+    '<div class="modal-actions"><button class="mini-btn" id="mCopy">'+icon('copy',14)+' คัดลอก</button>'+
+    '<button class="mini-btn" data-close>ปิด</button></div>');
+  setTimeout(()=>{const c=$('#mCopy');if(c)c.onclick=()=>copyText(payloadText(rec))});
+}
+
+/* ============ Check-in Form ============ */
+const ddName=makeDD('#ddName',{label:'เลือกชื่อ',options:NAMES.map(n=>({v:n,label:n})),placeholder:'เลือกชื่อ',onChange:v=>state.name=v});
+const ddShift=makeDD('#ddShift',{label:'เลือกกะการทำงาน',options:SHIFTS,placeholder:'เลือกกะ',onChange:v=>state.shift=v});
+const ddStatus=makeDD('#ddStatus',{label:'เลือกสถานะการทำงาน',options:STATUSES,placeholder:'On-site / Remote-work',dark:true,onChange:v=>state.status=v});
+
+ $('#btnToCamera').onclick=()=>{
+  if(!state.name){ddName.flash();toast('กรุณาเลือกชื่อ (Name) ก่อน','err');return}
+  if(!state.shift){ddShift.flash();toast('กรุณาเลือกกะการทำงาน (Shift) ก่อน','err');return}
+  state.mode='in';
+  go('camera');
+};
+
+/* ============ Camera ============ */
+const video=$('#camVideo'),frozen=$('#camFrozen'),flashEl=$('#flash');
+async function startCamera(silent){
+  $('#camError').classList.add('hidden');
+  stopStream();
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+    return showCamError('เบราว์เซอร์นี้ไม่รองรับการเข้าถึงกล้อง หรือไม่ได้เปิดผ่าน HTTPS');
+  }
+  try{
+    camCtl.stream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:{ideal:camCtl.facing},width:{ideal:1280},height:{ideal:720}},audio:false});
+    video.srcObject=camCtl.stream;
+    await video.play().catch(()=>{});
+    return true;
+  }catch(e){
+    if(!silent)showCamError(
+      e.name==='NotAllowedError'||e.name==='SecurityError'?'ไม่ได้รับอนุญาตให้ใช้กล้อง — เปิดสิทธิ์การเข้าถึงกล้องในเบราว์เซอร์แล้วกด "ลองใหม่"':
+      e.name==='NotFoundError'?'ไม่พบอุปกรณ์กล้องในเครื่องนี้':
+      'เปิดกล้องไม่สำเร็จ ('+(e.name||'unknown')+')');
+    return false;
+  }
+}
+function stopStream(){
+  if(camCtl.stream){camCtl.stream.getTracks().forEach(t=>t.stop());camCtl.stream=null}
+  video.srcObject=null;
+}
+function showCamError(msg){
+  $('#camErrMsg').textContent=msg;
+  $('#camError').classList.remove('hidden');
+}
+function setVfState(cap){
+  const s=$('#vfState');
+  s.classList.toggle('cap',cap);
+  s.querySelector('span').textContent=cap?'CAPTURED':'LIVE';
+}
+function enterCamera(){ // ทุกครั้งที่เข้าหน้ากล้อง = เริ่มถ่ายใหม่
+  state.photo=null;state.thumb=null;state.photoTs=null;
+  frozen.classList.add('hidden');video.classList.remove('hidden');
+  $('#vfGrid').style.display='';setVfState(false);
+  $('#shuttleWrap').classList.remove('hidden');
+  $('#camActions').classList.add('hidden');
+  $('#camTitleText').textContent=state.mode==='out'?'ถ่ายรูปยืนยันการออกงาน':'ถ่ายรูปรายงานตัว';
+  $('#camStep').textContent=state.mode==='out'?'STEP OUT · VIEWFINDER':'STEP 2/3 · VIEWFINDER';
+  startCamera(false);
+}
+function leaveCamera(){stopStream()}
+function downscale(src,max){
+  const s=Math.min(1,max/Math.max(src.videoWidth||src.width,src.videoHeight||src.height));
+  const c=document.createElement('canvas');
+  c.width=Math.max(1,Math.round((src.videoWidth||src.width)*s));
+  c.height=Math.max(1,Math.round((src.videoHeight||src.height)*s));
+  c.getContext('2d').drawImage(src,0,0,c.width,c.height);
+  return c.toDataURL('image/jpeg',.7);
+}
+function capture(){
+  if(!camCtl.stream||!video.videoWidth){toast('กล้องยังไม่พร้อมใช้งาน','err');return}
+  flashEl.classList.remove('go');void flashEl.offsetWidth;flashEl.classList.add('go');
+  state.photo=downscale(video,880);
+  state.thumb=downscale(video,200);
+  state.photoTs=new Date();
+  frozen.src=state.photo;
+  frozen.classList.remove('hidden');
+  $('#vfGrid').style.display='none';setVfState(true);
+  $('#shuttleWrap').classList.add('hidden');
+  $('#camActions').classList.remove('hidden');
+}
+function retake(){
+  state.photo=null;state.thumb=null;state.photoTs=null;
+  frozen.classList.add('hidden');
+  $('#vfGrid').style.display='';setVfState(false);
+  $('#camActions').classList.add('hidden');
+  $('#shuttleWrap').classList.remove('hidden');
+}
+function requireStatus(){
+  if(!state.status){ddStatus.flash();toast('กรุณาเลือกสถานะการทำงาน (Status) ก่อน','err');return false}
+  return true;
+}
+ $('#btnShutter').onclick=capture;
+ $('#btnRetake').onclick=retake;
+ $('#btnUseShot').onclick=()=>{
+  if(!state.photo){toast('กรุณากดชัตเตอร์ถ่ายรูปก่อน','err');return}
+  if(!requireStatus())return;
+  go('confirm');
+};
+ $('#btnFlip').onclick=async()=>{
+  const prev=camCtl.facing;
+  if(state.photo)retake();
+  camCtl.facing=prev==='user'?'environment':'user';
+  const ok=await startCamera(true);
+  if(!ok){camCtl.facing=prev;await startCamera(true);toast('ไม่พบกล้องอีกด้านในอุปกรณ์นี้','err')}
+};
+ $('#btnRetryCam').onclick=()=>startCamera(false);
+ $('#btnFileErr').onclick=()=>$('#fileInput').click();
+ $('#btnFileAlt').onclick=()=>$('#fileInput').click();
+
+/* แนบรูปจากไฟล์ (ทางเลือกเมื่อไม่มีกล้อง) */
+ $('#fileInput').addEventListener('change',function(){
+  const f=this.files&&this.files[0];this.value='';
+  if(!f)return;
+  if(!f.type.startsWith('image/')){toast('โปรดเลือกไฟล์รูปภาพ','err');return}
+  const rd=new FileReader();
+  rd.onload=()=>{
+    const img=new Image();
+    img.onload=()=>{
+      state.photo=downscale(img,880);state.thumb=downscale(img,200);state.photoTs=new Date();
+      toast('แนบรูปจากไฟล์เรียบร้อย','ok');
+      if(!requireStatus())return;
+      go('confirm');
+    };
+    img.src=rd.result;
+  };
+  rd.readAsDataURL(f);
+});
+
+/* ============ Confirmation ============ */
+function payloadText(r){
+  const lines=[
+    'Name : '+(r.name||'—'),
+    'Role : '+ROLE,
+    'Shift : '+(r.shift||'—'),
+    'Project : '+PROJECT,
+    'Status : '+(r.status||'—')
+  ];
+  if(r.checkInAt)lines.push('Check-in  : '+fmtFullTs(r.checkInAt));
+  if(r.checkOutAt)lines.push('Check-out : '+fmtFullTs(r.checkOutAt));
+  return lines.join('\n');
+}
+function renderConfirm(){
+  const isOut=state.mode==='out';
+  $('#cfPhoto').src=state.photo;
+  $('#cfShotTs').textContent='SHOT '+fmtClock(state.photoTs);
+  $('#cfName').textContent=state.name;
+  $('#cfShift').textContent=state.shift;
+  const st=$('#cfStatus');
+  st.textContent=state.status;
+  st.style.color=state.status==='On-site'?'var(--ok)':'var(--accent-deep)';
+  $('#cfInRow').classList.toggle('hidden',!isOut);
+  if(isOut&&state.myOpen)$('#cfInTime').textContent=fmtHM(state.myOpen.checkInAt);
+  $('#cfTitle').textContent=isOut?'ยืนยันลงเวลาออก':'ตรวจสอบก่อนบันทึก';
+  $('#cfPayload').textContent=payloadText({name:state.name,shift:state.shift,status:state.status});
+}
+ $('#btnCopyPayload').onclick=()=>copyReport($('#cfPayload').textContent,state.photo);
+ $('#btnRetakeMini').onclick=()=>go('camera');
+
+/* ============ แจ้งเตือน Discord / Teams ============ */
+function reportTitle(isOut){return isOut?'🕘 ลงเวลาออกงาน (Check-out Report)':'📋 รายงานตัวประจำกะ (Check-in Report)'}
+function reportFields(rec,isOut){
+  const fields=[
+    {name:'Name',value:rec.name||'—',inline:true},
+    {name:'Role',value:ROLE,inline:true},
+    {name:'Shift',value:rec.shift||'—',inline:true},
+    {name:'Project',value:PROJECT,inline:true},
+    {name:'Status',value:rec.status||'—',inline:true},
+    {name:'Check-in',value:fmtFullTs(rec.checkInAt),inline:true}
+  ];
+  if(isOut&&rec.checkOutAt)fields.push({name:'Check-out',value:fmtFullTs(rec.checkOutAt),inline:true});
+  return fields;
+}
+async function sendToDiscord(record,isOut){
+  const payload={
+    embeds:[{
+      title:reportTitle(isOut),
+      color:isOut?15965202:15844367,
+      fields:reportFields(record,isOut),
+      image:{url:'attachment://checkin.jpg'},
+      footer:{text:'NOC Check-in System'},
+      timestamp:new Date(record.checkOutAt||record.checkInAt).toISOString()
+    }]
+  };
+  const controller=new AbortController();
+  const timeout=setTimeout(()=>controller.abort(),10000);
+  try{
+    const formData=new FormData();
+    const src=isOut?(state.photo||''):(state.photo||'');
+    const bstr=atob(src.split(',')[1]||'');
+    const u8=new Uint8Array(bstr.length);
+    for(let i=0;i<bstr.length;i++)u8[i]=bstr.charCodeAt(i);
+    formData.append('files[0]',new Blob([u8],{type:'image/jpeg'}),'checkin.jpg');
+    formData.append('payload_json',JSON.stringify(payload));
+    const webhookResponse=await fetch(DISCORD_WEBHOOK_URL,{method:'POST',body:formData,signal:controller.signal});
+    if(!webhookResponse.ok)throw new Error('HTTP '+webhookResponse.status);
+    return true;
+  }catch(error){
+    console.error('Discord webhook failed:',error);
+    return false;
+  }finally{
+    clearTimeout(timeout);
+  }
+}
+async function sendToTeams(record,isOut){
+  const card={
+    type:'AdaptiveCard',
+    '$schema':'http://adaptivecards.io/schemas/adaptive-card.json',
+    version:'1.4',
+    body:[
+      {type:'TextBlock',size:'Medium',weight:'Bolder',text:isOut?'Check-out Report':'Check-in Report',wrap:true},
+      {type:'FactSet',facts:reportFields(record,isOut).map(f=>({title:f.name,value:f.value}))}
+    ]
+  };
+  const controller=new AbortController();
+  const timeout=setTimeout(()=>controller.abort(),10000);
+  try{
+    const response=await fetch(TEAMS_WEBHOOK_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({type:'message',attachments:[{contentType:'application/vnd.microsoft.card.adaptive',content:card}]}),
+      signal:controller.signal
+    });
+    if(!response.ok)throw new Error('HTTP '+response.status);
+    return true;
+  }catch(error){
+    console.error('Microsoft Teams webhook failed:',error);
+    return false;
+  }finally{
+    clearTimeout(timeout);
+  }
+}
+
+/* ============ บันทึกเข้า/ออกงาน ============ */
+const SUBMIT_LABELS={
+  discord:'บันทึก + Discord',
+  teams:'บันทึก + Teams'
+};
+function resetSubmitButtons(){
+  const buttons={discord:$('#btnSendDiscord'),teams:$('#btnSendTeams')};
+  Object.entries(buttons).forEach(([key,button])=>{
+    if(!button)return;
+    button.disabled=false;
+    button.textContent=SUBMIT_LABELS[key];
+  });
+}
+resetSubmitButtons();
+function startCheckout(){
+  if(!state.myOpen){toast('ยังไม่มีรายการเข้างานของวันนี้','err');return}
+  state.mode='out';
+  state.name=state.myOpen.name;
+  state.shift=state.myOpen.shift;
+  state.status=state.myOpen.status;
+  state.photo=null;state.thumb=null;state.photoTs=null;
+  go('camera');
+}
+async function submitTo(channel){
+  if(!state.photo||!state.thumb){toast('กรุณาถ่ายรูปก่อนบันทึก','err');return}
+  if(state.mode==='in'&&(!state.name||!state.shift||!state.status)){toast('ข้อมูลไม่ครบถ้วน โปรดตรวจสอบอีกครั้ง','err');return}
+  if(state.mode==='out'&&!state.myOpen){toast('ไม่พบรายการเข้างานของวันนี้','err');return}
+
+  const buttons={discord:$('#btnSendDiscord'),teams:$('#btnSendTeams')};
+  const b=buttons[channel];
+  if(!b)return;
+  Object.values(buttons).forEach(button=>{button.disabled=true});
+  b.innerHTML='<span class="spin"></span>'+(state.mode==='out'?'กำลังลงเวลาออก…':'กำลังบันทึก…');
+
+  const isOut=state.mode==='out';
+  let record=null;
+  try{
+    if(isOut){
+      const res=await api('/api/attendance/'+encodeURIComponent(state.myOpen.id)+'/checkout',
+        {method:'POST',body:{photo:state.photo,thumb:state.thumb}});
+      record=res.record;
+    }else{
+      const res=await api('/api/attendance',{method:'POST',body:{
+        name:state.name,shift:state.shift,status:state.status,photo:state.photo,thumb:state.thumb}});
+      record=res.record;
+      if(record&&record.name&&record.name!==state.user){
+        state.user=record.name;
+        store(SESS,{name:state.user,at:Date.now()});
+      }
+    }
+  }catch(err){
+    resetSubmitButtons();
+    if(err.unauthorized)return;
+    if(err.offline){toast('เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ ข้อมูลยังไม่ถูกบันทึก','err');return}
+    if(err.status===409){
+      toast(err.data&&err.data.error==='already_checked_out'?'วันนี้ลงเวลาออกแล้ว':'วันนี้รายงานตัวเข้าแล้ว','err');
+      refresh();go('home',-1);
+      return;
+    }
+    toast('บันทึกไม่สำเร็จ'+(err.message?' ('+err.message+')':''),'err');
+    return;
+  }
+  resetSubmitButtons();
+
+  state.lastRecord=record;
+  const okReceived=channel==='discord'?await sendToDiscord(record,isOut):await sendToTeams(record,isOut);
+  state.lastNotified={channel,ok:okReceived};
+  go('success');
+}
+$('#btnSendDiscord').onclick=()=>submitTo('discord');
+$('#btnSendTeams').onclick=()=>submitTo('teams');
+
+/* ============ Success ============ */
+function renderSuccess(){
+  const rec=state.lastRecord;
+  if(!rec){go('home',-1);return}
+  const isOut=state.mode==='out';
+  const d=new Date(rec.checkInAt);
+  $('#stampMain').textContent=isOut?'ลงเวลาออก':'รายงานเข้า';
+  $('#stampSub').textContent=(isOut?'CHECKED-OUT · ':'CHECKED-IN · ')+d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+  $('#succTs').textContent='IN '+fmtHM(rec.checkInAt)+(rec.checkOutAt?'  ·  OUT '+fmtHM(rec.checkOutAt):'');
+  $('#succLine').textContent=rec.name+' · '+rec.shift+' · '+rec.status;
+  $('#succPayload').textContent=payloadText(rec);
+  let note=isOut?'ลงเวลาออกเรียบร้อย ระบบบันทึกเวลาและรูปถ่ายไว้ในฐานข้อมูลกลางแล้ว'
+                 :'รายงานตัวเรียบร้อย ระบบบันทึกเวลาและรูปถ่ายไว้ในฐานข้อมูลกลางแล้ว';
+  if(state.lastNotified){
+    note+=state.lastNotified.ok
+      ? ' · แจ้งเตือน '+(state.lastNotified.channel==='discord'?'Discord':'Microsoft Teams')+' แล้ว'
+      : ' · แจ้งเตือนไม่สำเร็จ (ข้อมูลถูกบันทึกแล้ว)';
+  }
+  $('#succNote').textContent=note;
+  const st=$('#stamp');st.classList.remove('in');void st.offsetWidth;st.classList.add('in');
+  const sc=$('#scr-success');sc.classList.remove('thud');void sc.offsetWidth;sc.classList.add('thud');
+  $$('.debris').forEach(x=>{x.classList.remove('in');void x.offsetWidth;x.classList.add('in')});
+}
+ $('#btnCopy2').onclick=()=>copyText(payloadText(state.lastRecord||{}));
+function resetDraft(){
+  state.name=state.user;state.shift=null;state.status=null;
+  state.photo=null;state.thumb=null;state.photoTs=null;state.mode='in';
+  ddName.set(state.user);ddShift.set(null);ddStatus.set(null);
+}
+ $('#btnHome').onclick=()=>{resetDraft();go('home',-1)};
+
+/* ============ เริ่มต้น: มีรหัส + session ที่ใช้ได้ = เข้าหน้าหลักทันที ============ */
+(async function boot(){
+  let saved=null;
+  try{saved=localStorage.getItem(CODE_KEY)}catch(e){}
+  const sess=load(SESS);
+  if(saved)state.code=saved;
+  if(sess&&NAMES.includes(sess.name))state.user=sess.name;
+  if(state.code&&state.user){
+    try{
+      await loadData();
+      ddLogin.set(state.user);
+      if(state.myOpen||state.myLast)resetDraft();
+      else resetDraft();
+      document.body.classList.add('no-anim');
+      go('home');
+      requestAnimationFrame(()=>requestAnimationFrame(()=>document.body.classList.remove('no-anim')));
+      return;
+    }catch(err){
+      if(!err.unauthorized&&!err.offline){
+        // ข้อมูลเสียรูปแต่ยังใช้รหัสได้: ตกไปหน้า login
+      }
+    }
+  }
+  go('login');
+})();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Accès · รายงานตัวประจำกะ · G-able OCM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="stage">
+  <div class="side-label l">G-ABLE · OPERATION CENTER MANAGEMENT</div>
+  <div class="side-label r">LESS FRICTION · MORE FOCUS</div>
+
+  <div class="phone" id="phone">
+
+    <!-- 1) HOME / DASHBOARD -->
+    <section class="screen active" id="scr-home">
+      <header class="topbar">
+        <div class="topbar-id">
+          <span class="tag">G-ABLE · OPERATION CENTER MGMT</span>
+          <div class="topbar-title">รายงานตัวประจำกะ</div>
+        </div>
+        <button class="icon-btn" id="btnTheme" aria-label="สลับธีม"><i data-icon="sun"></i></button>
+        <button class="icon-btn" id="btnAdmin" title="หลังบ้าน / ตั้้งค่า" aria-label="หลังบ้าน"><i data-icon="settings"></i></button>
+      </header>
+      <div class="home-body">
+        <div class="clock-block">
+          <div class="cb-date" data-date-thai>—</div>
+          <div class="cb-time" data-clock>--:--:--</div>
+          <div class="cb-shift"><span class="cb-dot" id="cbDot"></span><span id="shiftHint">—</span></div>
+          <div class="punch-strip" id="punchStrip"></div>
+          <div class="punch-caption" id="punchCaption"></div>
+        </div>
+
+        <div class="today-card" id="todayCard"></div>
+
+        <button class="cta-checkin" id="btnCheckin">
+          <span class="cta-txt"><b>รายงานตัวเลย</b><span class="mono">CHECK-IN NOW</span></span>
+          <span class="cta-ic"><i data-icon="camera" data-size="22"></i></span>
+        </button>
+
+        <button class="sys-row" id="sysRow">
+          <span class="sys-chip" id="chipWh"><i class="dot"></i>Teams Webhook</span>
+          <span class="sys-chip" id="chipRem"><i class="dot"></i>เตือน T-10</span>
+          <span class="sys-go">ตั้้งค่า<i data-icon="chevron-right" data-size="13"></i></span>
+        </button>
+
+        <div class="hist-head">
+          <span class="lbl">ประวัติการรายงาน</span>
+          <span class="hist-count" id="histCount">0 รายการ</span>
+          <button class="mini-btn" id="btnClear"><i data-icon="trash" data-size="14"></i>ล้าง</button>
+        </div>
+        <div class="hist-list" id="histList"></div>
+        <div class="slogan"><i data-icon="heart" data-size="11"></i><span>Service with our heart</span></div>
+      </div>
+    </section>
+
+    <!-- 2) CHECK-IN FORM -->
+    <section class="screen" id="scr-form">
+      <header class="topbar">
+        <button class="icon-btn" data-back="home" aria-label="ย้อนกลับ"><i data-icon="arrow-left"></i></button>
+        <div class="topbar-title">ข้อมูลผู้รายงาน</div>
+        <span class="step-tag">STEP 1/3</span>
+      </header>
+      <div class="form-body">
+        <div class="form-card">
+          <div class="fc-head"><span class="lbl">ข้อมูลผู้รายงาน</span><span class="tag">FORM · F-01</span></div>
+          <div class="frow">
+            <label class="lbl">ชื่่อ (Name) <span class="req">*</span></label>
+            <div id="ddName"></div>
+          </div>
+          <div class="frow">
+            <label class="lbl">กะการทำงาน (Shift) <span class="req">*</span></label>
+            <div id="ddShift"></div>
+          </div>
+          <div class="frow">
+            <label class="lbl">โปรเจกต์ (Project) <span class="req">*</span></label>
+            <div id="ddProject"></div>
+          </div>
+          <div class="frow">
+            <label class="lbl">สถานะการทำงาน (Status) <span class="req">*</span></label>
+            <div id="ddStatus"></div>
+          </div>
+          <div class="frow">
+            <label class="lbl">ตำแหน่ง (Role)</label>
+            <div class="fixed-val"><i data-icon="lock" data-size="16"></i>NOC Engineer<span class="fx-tag">FIXED</span></div>
+          </div>
+        </div>
+        <p class="form-note"><i data-icon="clock" data-size="17"></i>ระบบบันทึกวัน-เวลาอัตโนมัติเมื่อกดส่ง · ต้องแนบรูปทุกครัง · รูปจะถูกลบทันทีหลังการส่งตามนโยบายความเป็่นส่ว่นตัว</p>
+        <button class="btn-primary" id="btnToCamera"><i data-icon="camera" data-size="20"></i>ถ่ายรูปประกอบรายงาน</button>
+      </div>
+    </section>
+
+    <!-- 3) CAMERA -->
+    <section class="screen dark" id="scr-camera">
+      <div class="cam-top">
+        <button class="icon-btn dark" data-back="form" aria-label="ย้อนกลับ"><i data-icon="arrow-left"></i></button>
+        <div class="cam-title">ถ่ายรูปรายงานตัว<span class="tag">STEP 2/3 · VIEWFINDER</span></div>
+        <button class="icon-btn dark" id="btnFlip" title="สลับกล้อง" aria-label="สลับกล้อง"><i data-icon="refresh-cw"></i></button>
+      </div>
+      <div class="cam-stage">
+        <video id="camVideo" autoplay playsinline muted></video>
+        <img id="camFrozen" class="hidden" alt="รูปที่ถ่าย">
+        <div class="vf-grid" id="vfGrid"><i class="v" style="left:33.33%"></i><i class="v" style="left:66.66%"></i><i class="h" style="top:33.33%"></i><i class="h" style="top:66.66%"></i></div>
+        <div class="vf-brackets"><i></i><i></i><i></i><i></i></div>
+        <div class="vf-state" id="vfState"><i></i><span>LIVE</span></div>
+        <div class="vf-ts" id="vfTs">--:--:--</div>
+        <div class="flash" id="flash"></div>
+        <div class="cam-error hidden" id="camError">
+          <i data-icon="alert" data-size="34"></i>
+          <p id="camErrMsg"></p>
+          <div class="cam-err-actions">
+            <button class="mini-btn ondark" id="btnRetryCam">ลองใหม่</button>
+            <button class="mini-btn ondark" id="btnFileErr">เลือกไฟลว์รูปแทน</button>
+          </div>
+        </div>
+      </div>
+      <div class="cam-bottom">
+        <button class="file-alt" id="btnFileAlt"><i data-icon="image" data-size="15"></i>อัปโหลดรูปจากเครื่่องแทน (กรณีมิมีกล้อง)</button>
+        <div class="shuttle-row" id="shuttleWrap">
+          <button class="shutter" id="btnShutter" aria-label="ถ่ายรูป"><span></span></button>
+        </div>
+        <div class="cam-actions hidden" id="camActions">
+          <button class="btn-ghost dark" id="btnRetake">ถ่ายใหม่</button>
+          <button class="btn-paper" id="btnUseShot">ใช้รูปนี้</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4) CONFIRMATION -->
+    <section class="screen" id="scr-confirm">
+      <header class="topbar">
+        <button class="icon-btn" data-back="camera" aria-label="ย้อนกลับ"><i data-icon="arrow-left"></i></button>
+        <div class="topbar-title">ตรวจสอบกอนส่ง</div>
+        <span class="step-tag">STEP 3/3</span>
+      </header>
+      <div class="confirm-body">
+        <div class="photo-card">
+          <div class="ph-wrap">
+            <img id="cfPhoto" alt="รูปประกอบรายงาน">
+            <span class="photo-ts" id="cfShotTs">SHOT --:--:--</span>
+          </div>
+          <div class="ph-caption">
+            <span class="tag">PHOTO · ATTACHED</span>
+            <button class="mini-btn" id="btnRetakeMini"><i data-icon="camera" data-size="14"></i>ถ่ายใหม่</button>
+          </div>
+        </div>
+
+        <div class="sum-card">
+          <div class="fc-head"><span class="lbl">สรุปข้อมูลทั้่งหมด</span><span class="tag">SUMMARY</span></div>
+          <div class="srow"><span class="k">Name</span><span class="v" id="cfName">—</span></div>
+          <div class="srow"><span class="k">Role</span><span class="v">NOC Engineer</span></div>
+          <div class="srow"><span class="k">Shift</span><span class="v mono" id="cfShift">—</span></div>
+          <div class="srow"><span class="k">Project</span><span class="v" id="cfProject">—</span></div>
+          <div class="srow"><span class="k">Status</span><span class="v" id="cfStatus">—</span></div>
+          <div class="srow"><span class="k">ปลายทางการส่ง</span><span class="v" id="cfDest">—</span></div>
+          <div class="srow"><span class="k">เวลาที่บันทึก (อัตโนมัติ)</span><span class="v mono" data-clock>--:--:--</span></div>
+        </div>
+
+        <button class="mini-btn hidden" id="btnWhSetup" style="align-self:flex-start"><i data-icon="link" data-size="14"></i>ตังค์ Webhook กอนส่ง</button>
+
+        <div class="payload-card">
+          <div class="payload-head">
+            <span class="lbl">ข้อความที่จะส่ง</span>
+            <button class="mini-btn ondark" id="btnCopyPayload"><i data-icon="copy" data-size="14"></i>คิัดลอก</button>
+          </div>
+          <pre class="payload" id="cfPayload"></pre>
+        </div>
+
+        <div class="confirm-actions">
+          <button class="btn-ghost" data-back="form">แก้ไขข้อมูล</button>
+          <button class="btn-accent" id="btnSubmit">ส่งรายงาน</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5) SUCCESS -->
+    <section class="screen" id="scr-success">
+      <div class="success-wrap">
+        <div class="stamp-zone">
+          <span class="debris d1"></span><span class="debris d2"></span><span class="debris d3"></span>
+          <div class="stamp" id="stamp">
+            <span class="stamp-top">G-ABLE OCM</span>
+            <span class="stamp-main">รายงานแลว</span>
+            <span class="stamp-sub" id="stampSub">CHECKED-IN</span>
+          </div>
+        </div>
+        <div class="succ-ts" id="succTs">—</div>
+        <div class="succ-line" id="succLine">—</div>
+        <p class="succ-note">ส่้งรายงานเรียบร้อบ ระบบบันทึกวัน-เวลาอัตโนมัติแลว ข้อความรายงานถูกส่งต่อให้ผู้รับ / ทีม NOC ใน Teams</p>
+
+        <div class="deliver demo" id="deliverRow"></div>
+        <button class="mini-btn hidden" id="btnRetrySend"><i data-icon="refresh-cw" data-size="14"></i>ลองส่งเข้า Teams อีกครั้ง</button>
+
+        <div class="copy-card">
+          <img class="copy-photo" id="succPhoto" alt="รูปรายงาน">
+          <div class="copy-info">
+            <div class="copy-title">รูป + ข้อความ พร้อคิัดลอก</div>
+            <div class="copy-sub">วางใน Teams group chat ได้ทันที — รูปจะถูกลบอัตโนมัติเมื่อออกจากหน้านี้</div>
+          </div>
+        </div>
+        <button class="btn-accent" id="btnCopyBoth"><i data-icon="copy" data-size="19"></i>คิัดลอกกรูป + ข้อความ</button>
+        <button class="btn-ghost" id="btnCopy3">คิัดลอกข้อความเท่านั้่น</button>
+
+        <pre class="payload succ-payload" id="succPayload"></pre>
+        <button class="btn-primary" id="btnHome">กลับหน้าหลัก</button>
+        <div class="slogan"><i data-icon="heart" data-size="11"></i><span>Service with our heart</span></div>
+      </div>
+    </section>
+
+    <!-- 6) ADMIN / หลังบ้าน -->
+    <section class="screen" id="scr-admin">
+      <header class="topbar">
+        <button class="icon-btn" data-back="home" aria-label="ย้อนกลับ"><i data-icon="arrow-left"></i></button>
+        <div class="topbar-title">หลังบ้าน · ตั้งค่าระบบ</div>
+        <span class="step-tag">ADMIN</span>
+      </header>
+      <div class="form-body">
+
+        <div class="form-card">
+          <div class="fc-head"><span class="lbl">เชื่อมต่อ Microsoft Teams</span><span class="tag" id="whTag">OFF</span></div>
+          <div class="frow">
+            <label class="lbl">Webhook URL (Teams Workflow)</label>
+            <input class="txt-input" id="whInput" type="url" placeholder="https://prod-XX.logic.azure.com/…/triggers/…/invoke" spellcheck="false" autocomplete="off">
+            <div class="frow-actions">
+              <button class="mini-btn" id="btnSaveWh"><i data-icon="check" data-size="14"></i>บันทึก</button>
+              <button class="mini-btn" id="btnTestWh"><i data-icon="send" data-size="14"></i>ทดสอบการเชื่อมต่อ</button>
+            </div>
+            <p class="hint">สร้างได้จาก Teams → Workflows → เทมเพลต "Post to a channel when a webhook request is received" แล้วคัดลอก HTTP POST URL มาวางที่นี้ — รายงานทุกครังจะถูกโพสต์เป็นตัวการ์ดลง group chat นั้น</p>
+          </div>
+        </div>
+
+        <div class="form-card">
+          <div class="fc-head"><span class="lbl">ข้อมูลพนักงาน / ตารางกะ</span><span class="tag" id="rosterTag">—</span></div>
+          <div class="frow">
+            <div class="frow-actions">
+              <button class="mini-btn" id="btnUploadXl"><i data-icon="upload" data-size="14"></i>อัปโหลด Excel / CSV</button>
+              <button class="mini-btn" id="btnTemplate"><i data-icon="download" data-size="14"></i>ดาวน์โหลดแบบ</button>
+            </div>
+            <p class="hint">คอลัมน์: Name, Shift, Project — รายชื่อและตารางกะจะอัปเดตทั้่งระบบ (แทนที่ข้อมูลเดิม) และระบบจะกรอกกะ/โปรเจกต์ให้อัตโนมัติเมื่อเลือกรชื่อ · รองรับ .xlsx และ .csv · ในระบบจริงใช้ไฟล์เดียวกันนี้บน OneDrive ที่ Power Automate อ่าน</p>
+          </div>
+          <div class="roster-wrap">
+            <table class="roster-table">
+              <thead><tr><th>NAME</th><th>SHIFT</th><th>PROJECT</th></tr></thead>
+              <tbody id="rosterBody"></tbody>
+            </table>
+          </div>
+          <div class="frow">
+            <button class="mini-btn danger" id="btnResetRoster"><i data-icon="refresh-cw" data-size="14"></i>รีเซ็ตชื่อเป็นค่าเริ่มต้น</button>
+          </div>
+        </div>
+
+        <div class="form-card">
+          <div class="fc-head"><span class="lbl">แจ้งเตือนก่อนเวลาทำงาน</span><span class="tag">T-10 MIN</span></div>
+          <div class="frow row-between">
+            <div>
+              <div class="fx-title">เตือนทุกคน 10 นาทีก่อนเริ่มกะ</div>
+              <p class="hint" style="margin-top:6px">อ่านเวลาเริ่มกะจากตารางข้างต้น — แจ้งในแอป + แจ้งเตือนระบบ + ส่งข้อความเตือนเข้า Teams group chat</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="remToggle">
+              <span class="track"></span><span class="knob"></span>
+            </label>
+          </div>
+          <div class="frow">
+            <button class="mini-btn" id="btnTestRem"><i data-icon="bell" data-size="14"></i>ทดสอบการแจ้งเตือน</button>
+          </div>
+        </div>
+
+        <div class="form-card">
+          <div class="fc-head"><span class="lbl">ธีม</span><span class="tag">DARK / LIGHT</span></div>
+          <div class="frow">
+            <div class="seg" id="themeSeg">
+              <button type="button" data-t="light">สว่าง</button>
+              <button type="button" data-t="dark">มืด</button>
+              <button type="button" data-t="auto">อัตโนมัติ</button>
+            </div>
+            <p class="hint">"อัตโนมัติ" จะตามการตั้งค่าของอุปกรณ์ — โหมดมืดใช้โทนส้ม-ทองตาม CI ของ G-able</p>
+          </div>
+        </div>
+
+        <div class="form-card">
+          <div class="fc-head"><span class="lbl">ข้อมูลบนอุปกรณ์</span><span class="tag" id="dataTag">—</span></div>
+          <div class="frow">
+            <div class="frow-actions">
+              <button class="mini-btn danger" id="btnClear2"><i data-icon="trash" data-size="14"></i>ล้างประวัติการรายงาน</button>
+              <button class="mini-btn danger" id="btnWipe"><i data-icon="trash" data-size="14"></i>รีเซ็ตทั้่งหมด</button>
+            </div>
+            <p class="hint">รูปถ่ายถูกลบทันทีหลังการส่งและไม่ถูกเก็บไว้ในอุปกรณ์ — เก็บเฉพาะข้อความรายงาน ตามนโยบายความเป็นส่วนตัว (PDPA)</p>
+          </div>
+        </div>
+
+        <div class="slogan"><i data-icon="heart" data-size="11"></i><span>Service with our heart</span></div>
+      </div>
+    </section>
+
+    <!-- โอเวอร์เล่ย์ -->
+    <div id="overlay-root"><div class="toast-wrap" id="toastWrap"></div></div>
+  </div>
+
+  <div class="stage-note">ACCÈS · G-ABLE OCM — รูปถ่ายถูกลบทันทีหลังส่ง · ข้อมูลอยู่บนอุปกรณ์นี้เท่านั้น</div>
+</div>
+
+<input type="file" id="fileInput" accept="image/*" capture="environment" hidden>
+<input type="file" id="rosterInput" accept=".xlsx,.xls,.csv" hidden>
+
+<script>
+(function(){
+'use strict';
+/* ============ ค่าคงที่ ============ */
+const PROJECT_DEFAULT='Cloud Operation Support', ROLE='NOC Engineer';
+const SHIFTS=[
+  {v:'7.00-19.00',label:'7.00 – 19.00',sub:'กะเช้า · 12 ชั่วโมง'},
+  {v:'8.00-20.00',label:'8.00 – 20.00',sub:'กะบ่าย · 12 ชั่วโมง'}
+];
+const STATUSES=[
+  {v:'On-site',label:'On-site',sub:'ปฏิบัติงาน ณ ศูนย์ปฏิบัติการ'},
+  {v:'Remote-work',label:'Remote-work',sub:'ปฏิบัติงานทางไกล'}
+];
+const DEFAULT_ROSTER=[
+  {name:'aaaa',shift:'7.00-19.00',project:PROJECT_DEFAULT},
+  {name:'bbbb',shift:'8.00-20.00',project:PROJECT_DEFAULT}
+];
+const SHIFT_RE=/^(\d{1,2})\.(\d{2})-(\d{1,2})\.(\d{2})$/;
+const KEY='noc_checkin_records_v1', RKEY='acces_roster_v1', SKEY='acces_settings_v1', FKEY='acces_reminder_fired_v1';
+const SUBMIT_LABEL='ส่งรายงาน';
+
+/* ============ ตัวช่วยทั่วไป ============ */
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+const pad=n=>String(n).padStart(2,'0');
+const ENM=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+const fmtClock=(d=new Date())=>pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
+const fmtShortTs=ts=>{const d=new Date(ts);return pad(d.getDate())+' '+ENM[d.getMonth()]+' · '+pad(d.getHours())+':'+pad(d.getMinutes())};
+const fmtFullTs=ts=>{const d=new Date(ts);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+fmtClock(d)};
+const thFullDate=(d=new Date())=>new Intl.DateTimeFormat('th-TH',{dateStyle:'full'}).format(d);
+const sameDay=(a,b=new Date())=>{const x=new Date(a);return x.getFullYear()===b.getFullYear()&&x.getMonth()===b.getMonth()&&x.getDate()===b.getDate()};
+const store=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}};
+const load=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}};
+const elFromHTML=h=>{const t=document.createElement('div');t.innerHTML=h.trim();return t.firstElementChild};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ============ ชุดไอคอน (SVG ในไฟล์) ============ */
+const ICONS={
+ 'arrow-left':'<path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>',
+ 'camera':'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>',
+ 'image':'<rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>',
+ 'image-off':'<rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-4.5-4.5L6 21"/><line x1="3" x2="21" y1="3" y2="21"/>',
+ 'chevron-down':'<path d="m6 9 6 6 6-6"/>',
+ 'chevron-right':'<path d="m9 18 6-6-6-6"/>',
+ 'refresh-cw':'<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
+ 'copy':'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>',
+ 'trash':'<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+ 'x':'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+ 'alert':'<circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/>',
+ 'check':'<path d="M20 6 9 17l-5-5"/>',
+ 'check-circle':'<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+ 'lock':'<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+ 'clock':'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+ 'sun':'<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>',
+ 'moon':'<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
+ 'settings':'<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>',
+ 'bell':'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+ 'upload':'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>',
+ 'download':'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/>',
+ 'send':'<path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/>',
+ 'link':'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+ 'heart':'<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>'
+};
+const icon=(n,s=18)=>'<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+ICONS[n]+'</svg>';
+$$('[data-icon]').forEach(n=>n.innerHTML=icon(n.dataset.icon,n.dataset.size||18));
+
+/* ============ สถานะแอป ============ */
+const state={name:null,shift:null,project:null,status:null,photo:null,photoTs:null};
+let records=load(KEY)||[];
+let migrated=false; // ลบรูปที่เคยเก็บในเวอร์ชันก่อน (นโยบายความเป็นส่วนตัว)
+records=records.map(r=>{
+  if(r&&r.photo){migrated=true;const c={...r};delete c.photo;c.photoPurged=true;return c}
+  return r;
+});
+if(migrated)store(KEY,records);
+let roster=[]; // โหลดจาก noc_roster.json
+let settings=Object.assign({webhook:'',reminder:true,theme:'auto'},load(SKEY)||{});
+let lastRec=null, fired={}, pngPromise=null;
+const camCtl={stream:null,facing:'user'};
+function saveSettings(){store(SKEY,settings)}
+
+/* ============ Toast ============ */
+function toast(msg,type='info'){
+  const t=elFromHTML('<div class="toast '+type+'">'+icon(type==='ok'?'check-circle':'alert',18)+'<span>'+msg+'</span></div>');
+  $('#toastWrap').appendChild(t);
+  requestAnimationFrame(()=>t.classList.add('show'));
+  setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),300)},2800);
+}
+
+/* ============ คัดลอกข้อความ ============ */
+async function copyText(t){
+  try{await navigator.clipboard.writeText(t);toast('คัดลอกข้อความแล้ว','ok');return}catch(e){}
+  const ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;opacity:0';
+  document.body.appendChild(ta);ta.select();
+  try{document.execCommand('copy');toast('คัดลอกข้อความแล้ว','ok')}
+  catch(_){toast('คัดลอกไม่สำเร็จ','err')}
+  ta.remove();
+}
+
+/* ============ ดรอปดาวน์แบบ bottom-sheet ============ */
+let activeClose=null;
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&activeClose)activeClose()});
+function makeDD(sel,opt){
+  const mount=typeof sel==='string'?$(sel):sel;
+  let value=opt.value??null, openFl=false;
+  mount.classList.add('dd');
+  mount.innerHTML='<button type="button" class="dd-btn"><span class="dd-val"></span>'+icon('chevron-down',20)+'</button>';
+  const btn=mount.querySelector('.dd-btn');
+  const paint=()=>{
+    const o=opt.options.find(x=>x.v===value);
+    btn.querySelector('.dd-val').innerHTML=o?'<b>'+esc(o.label)+'</b>':'<span class="ph">'+(opt.placeholder||'เลือก')+'</span>';
+    mount.classList.remove('invalid');
+  };
+  paint();
+  function open(){
+    if(openFl)return; openFl=true; btn.classList.add('open');
+    const bd=elFromHTML('<div class="dd-backdrop"></div>');
+    const sheet=elFromHTML('<div class="dd-sheet"><div class="grab"></div>'+
+      '<div class="dd-head"><span class="lbl">'+opt.label+'</span><button class="icon-btn sm">'+icon('x',16)+'</button></div>'+
+      '<div class="dd-opts">'+opt.options.map(o=>
+        '<button type="button" class="dd-opt'+(o.v===value?' sel':'')+'" data-v="'+esc(o.v)+'">'+
+        '<span><b>'+esc(o.label)+'</b>'+(o.sub?'<small>'+esc(o.sub)+'</small>':'')+'</span>'+
+        (o.v===value?'<span class="dd-check">'+icon('check',17)+'</span>':'')+'</button>').join('')+
+      '</div></div>');
+    $('#overlay-root').append(bd,sheet);
+    requestAnimationFrame(()=>{bd.classList.add('show');sheet.classList.add('open')});
+    const close=()=>{if(!openFl)return;openFl=false;btn.classList.remove('open');activeClose=null;
+      bd.classList.remove('show');sheet.classList.remove('open');
+      setTimeout(()=>{bd.remove();sheet.remove()},330)};
+    activeClose=close;
+    bd.onclick=close; sheet.querySelector('.dd-head .icon-btn').onclick=close;
+    sheet.querySelectorAll('.dd-opt').forEach(b=>b.onclick=()=>{
+      value=b.dataset.v;paint();close();opt.onChange&&opt.onChange(value);
+    });
+  }
+  btn.onclick=open;
+  return{
+    get value(){return value},
+    set(v){value=v;paint()},
+    setOptions(opts){opt.options=opts;if(value&&!opts.find(x=>x.v===value)){value=null;paint()}},
+    flash(){mount.classList.add('invalid');setTimeout(()=>mount.classList.remove('invalid'),1600)}
+  };
+}
+
+/* ============ โมดัล ============ */
+function openModal(inner){
+  const bd=elFromHTML('<div class="modal-bd"></div>');
+  const m=elFromHTML('<div class="modal">'+inner+'</div>');
+  $('#overlay-root').append(bd,m);
+  requestAnimationFrame(()=>{bd.classList.add('show');m.classList.add('show')});
+  let closed=false;
+  const close=()=>{if(closed)return;closed=true;activeClose=null;
+    bd.classList.remove('show');m.classList.remove('show');
+    setTimeout(()=>{bd.remove();m.remove()},280)};
+  activeClose=close; bd.onclick=close;
+  m.querySelectorAll('[data-close]').forEach(b=>b.onclick=close);
+  return{close,root:m};
+}
+function confirmModal(title,msg,onOk){
+  const {close}=openModal(
+    '<div class="modal-text"><b style="font-size:16px">'+title+'</b><br>'+msg+'</div>'+
+    '<div class="modal-actions"><button class="mini-btn" data-close>ยกเลิก</button>'+
+    '<button class="mini-btn danger" id="cfOk">ยืนยัน</button></div>');
+  setTimeout(()=>{const b=$('#cfOk');if(b)b.onclick=()=>{close();onOk()}});
+}
+
+/* ============ เรอเตอร์หน้าจอ ============ */
+let current=$('#scr-home'), currentId='home';
+const hooks={
+  home:{enter:renderHome},
+  camera:{enter:enterCamera,leave:leaveCamera},
+  confirm:{enter:renderConfirm},
+  success:{enter:renderSuccess,leave:purgePhoto},
+  admin:{enter:renderAdmin}
+};
+function go(id,dir=1){
+  const next=$('#scr-'+id);
+  if(current===next)return;
+  if(hooks[currentId]&&hooks[currentId].leave)hooks[currentId].leave();
+  next.classList.add(dir>0?'pre-r':'pre-l');
+  next.getBoundingClientRect();
+  next.classList.remove('pre-r','pre-l');
+  next.classList.add('active');
+  if(current){
+    current.classList.remove('active');
+    current.classList.add(dir>0?'away-l':'away-r');
+    setTimeout(()=>current.classList.remove('away-l','away-r'),430);
+  }
+  current=next;currentId=id;next.scrollTop=0;
+  if(hooks[id]&&hooks[id].enter)hooks[id].enter();
+}
+$$('[data-back]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.back,-1)));
+
+/* ============ นาฬิกา ============ */
+function shiftHintUpdate(now){
+  const h=now.getHours(),el=$('#shiftHint'),dot=$('#cbDot');
+  let t,cls;
+  if(h>=7&&h<19){t='อยู่ในช่วงกะ 7.00 – 19.00';cls='on'}
+  else if(h>=8&&h<20){t='อยู่ในช่วงกะ 8.00 – 20.00';cls='on'}
+  else{t='อยู่นอกช่วงกะที่กำหนด';cls='off'}
+  if(el)el.textContent=t; if(dot)dot.className='cb-dot '+cls;
+}
+function tick(){
+  const now=new Date();
+  $$('[data-clock]').forEach(n=>n.textContent=fmtClock(now));
+  $$('[data-date-thai]').forEach(n=>n.textContent=thFullDate(now));
+  const vf=$('#vfTs'); if(vf)vf.textContent=fmtFullTs(now);
+  shiftHintUpdate(now);
+}
+tick(); setInterval(tick,500);
+
+/* ============ บัตรตอกเวลา (เข้้ารหัสวันที่เป็น binary) ============ */
+(function buildPunch(){
+  const d=new Date();
+  const bits=(d.getDate().toString(2).padStart(5,'0')+(d.getMonth()+1).toString(2).padStart(4,'0')+(d.getFullYear()%100).toString(2).padStart(7,'0')).split('');
+  $('#punchStrip').innerHTML=bits.map((b,i)=>'<i class="'+(b==='1'?'on':'')+(i===5||i===9?' gap':'')+'"></i>').join('');
+  $('#punchCaption').textContent='ACCÈS · PUNCH·ENC '+d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+})();
+
+/* ============ ระบบธีม (Dark / Light / อัตโนมัติตามเครื่อง) ============ */
+const mq=window.matchMedia?matchMedia('(prefers-color-scheme: dark)'):null;
+function resolvedTheme(){return settings.theme==='auto'?(mq&&mq.matches?'dark':'light'):settings.theme}
+function applyTheme(){
+  $('#phone').dataset.theme=resolvedTheme();
+  const bt=$('#btnTheme'); if(bt)bt.innerHTML=icon(resolvedTheme()==='dark'?'moon':'sun',18);
+  if(currentId==='admin')renderAdmin();
+}
+if(mq){try{mq.addEventListener('change',()=>{if(settings.theme==='auto')applyTheme()})}
+  catch(e){try{mq.addListener(()=>{if(settings.theme==='auto')applyTheme()})}catch(_){}}}
+ $('#btnTheme').onclick=()=>{
+  settings.theme=resolvedTheme()==='dark'?'light':'dark';
+  saveSettings();applyTheme();
+};
+
+/* ============ Home / Dashboard ============ */
+function rowHTML(r){
+  return '<button class="hist-row" data-id="'+r.id+'">'+
+    '<span class="hist-thumb purged">'+icon('image-off',18)+'</span>'+
+    '<div class="hist-mid"><div class="hist-name">'+esc(r.name)+'<span class="hist-shift">'+esc(r.shift)+'</span></div>'+
+    '<div class="hist-meta">'+fmtShortTs(r.ts)+(r.delivery&&r.delivery!=='demo'?' · TEAMS':'')+'</div></div>'+
+    '<span class="chip '+(r.status==='On-site'?'st-on':'st-rm')+'"><i></i>'+esc(r.status)+'</span></button>';
+}
+function renderHome(){
+  const d=new Date();
+  const todays=records.filter(r=>sameDay(r.ts));
+  const done=todays.length>0, tc=$('#todayCard');
+  if(done){
+    const last=todays[0], lt=new Date(last.ts);
+    tc.classList.add('done');
+    tc.innerHTML='<div><div class="tc-title ok">มีการรายงานตัวแล้ววันนี้</div>'+
+      '<div class="tc-meta">'+todays.length+' รายการ · ล่าสุด '+pad(lt.getHours())+':'+pad(lt.getMinutes())+' โดย '+esc(last.name)+'</div></div>'+
+      '<span class="mini-stamp">CHECKED-IN</span>';
+  }else{
+    tc.classList.remove('done');
+    tc.innerHTML='<div><div class="tc-title">ยังไม่มีรายงานตัววันนี้</div>'+
+      '<div class="tc-meta">กดปุ่มด้านล่างเพื่อเริ่มรายงานตัว</div></div>'+
+      '<span class="tc-icon">'+icon('clock',24)+'</span>';
+  }
+  $('#chipWh').className='sys-chip '+(settings.webhook?'on':'warn');
+  $('#chipRem').className='sys-chip '+(settings.reminder?'on':'warn');
+  $('#histCount').textContent=records.length+' รายการ';
+  $('#btnClear').style.visibility=records.length?'visible':'hidden';
+  $('#histList').innerHTML=records.length?records.map(rowHTML).join(''):
+    '<div class="empty">'+icon('image',30)+'<p>ยังไม่มีประวัติการรายงาน<br>รายงานตัวครั้งแรกของคุณวันนี้เลย</p></div>';
+  $$('#histList .hist-row').forEach(b=>b.onclick=()=>openRecord(b.dataset.id));
+}
+ $('#btnCheckin').onclick=()=>go('form');
+ $('#btnAdmin').onclick=()=>go('admin');
+ $('#sysRow').onclick=()=>go('admin');
+function clearHistory(){
+  records=[];store(KEY,records);
+  if(currentId==='home')renderHome();
+  if(currentId==='admin')renderAdmin();
+}
+ $('#btnClear').onclick=()=>confirmModal('ล้างประวัติทั้งหมด?','การลบรายการทั้งหมดไม่สามารถย้อนกลับได้',()=>{
+  clearHistory();toast('ล้างประวัติเรียบร้อย','ok');
+});
+function openRecord(id){
+  const r=records.find(x=>x.id===id); if(!r)return;
+  const {close}=openModal(
+    '<div class="modal-head"><span class="lbl">รายงาน '+fmtShortTs(r.ts)+'</span>'+
+    '<button class="icon-btn sm" data-close>'+icon('x',16)+'</button></div>'+
+    '<div class="modal-text" style="display:flex;align-items:center;gap:9px;color:var(--ink-3)">'+
+    icon('image-off',16)+'<span>รูปถ่ายถูกลบออกจากอุปกรณ์แล้ว ตามนโยบายความเป็นส่วนตัว</span></div>'+
+    '<pre class="payload">'+esc(payloadText(r,true))+'</pre>'+
+    '<div class="modal-actions"><button class="mini-btn" id="mCopy">'+icon('copy',14)+' คัดลอก</button>'+
+    '<button class="mini-btn danger" id="mDel">'+icon('trash',14)+' ลบรายการนี้</button></div>');
+  setTimeout(()=>{
+    const c=$('#mCopy'),dd=$('#mDel');
+    if(c)c.onclick=()=>copyText(payloadText(r,true));
+    if(dd)dd.onclick=()=>{records=records.filter(x=>x.id!==id);store(KEY,records);renderHome();close();toast('ลบรายงานแล้ว','ok')};
+  });
+}
+
+/* ============ Dropdown ทั้งสี่ + กรอกอัตโนมัติจากตาราง Excel ============ */
+const ddName=makeDD('#ddName',{label:'เลือกชื่อ',options:[],placeholder:'เลือกชื่อ',onChange:v=>{state.name=v;autofill(v)}});
+const ddShift=makeDD('#ddShift',{label:'เลือกกะการทำงาน',options:SHIFTS,placeholder:'เลือกกะ',onChange:v=>state.shift=v});
+const ddProject=makeDD('#ddProject',{label:'เลือกโปรเจกต์',options:[],placeholder:'เลือกโปรเจกต์',onChange:v=>state.project=v});
+const ddStatus=makeDD('#ddStatus',{label:'เลือกสถานะการทำงาน',options:STATUSES,placeholder:'On-site / Remote-work',onChange:v=>state.status=v});
+
+function shiftMeta(v){
+  const k=SHIFTS.find(s=>s.v===v); if(k)return k;
+  return {v:v,label:v.replace('-',' – '),sub:'กะจากตาราง Excel'};
+}
+function refreshDropdowns(){
+  const names=Array.from(new Set(roster.map(r=>r.name).filter(Boolean)));
+  ddName.setOptions(names.map(n=>({v:n,label:n})));
+  const sv=new Set(SHIFTS.map(s=>s.v));
+  roster.forEach(r=>{if(r.shift&&SHIFT_RE.test(r.shift))sv.add(r.shift)});
+  ddShift.setOptions(Array.from(sv).map(v=>shiftMeta(v)));
+  const pv=new Set([PROJECT_DEFAULT]);
+  roster.forEach(r=>{if(r.project)pv.add(r.project)});
+  ddProject.setOptions(Array.from(pv).map(p=>({v:p,label:p})));
+}
+function autofill(name){
+  const r=roster.find(x=>x.name===name); if(!r)return;
+  let filled=false;
+  if(r.shift&&SHIFT_RE.test(r.shift)&&ddShift.value!==r.shift){ddShift.set(r.shift);state.shift=r.shift;filled=true}
+  if(r.project&&ddProject.value!==r.project){ddProject.set(r.project);state.project=r.project;filled=true}
+  if(filled)toast('กรอกกะ/โปรเจกต์จากตาราง Excel ให้อัตโนมัติ','ok');
+}
+ $('#btnToCamera').onclick=()=>{
+  if(!state.name){ddName.flash();toast('กรุณาเลือกชื่อ (Name) ก่อน','err');return}
+  if(!state.shift){ddShift.flash();toast('กรุณาเลือกกะการทำงาน (Shift) ก่อน','err');return}
+  if(!state.project){ddProject.flash();toast('กรุณาเลือกโปรเจกต์ (Project) ก่อน','err');return}
+  if(!state.status){ddStatus.flash();toast('กรุณาเลือกสถานะการทำงาน (Status) ก่อน','err');return}
+  go('camera');
+};
+
+/* ============ Camera ============ */
+const video=$('#camVideo'),frozen=$('#camFrozen'),flashEl=$('#flash');
+async function startCamera(silent){
+  $('#camError').classList.add('hidden');
+  stopStream();
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+    return showCamError('เบราว์เซอร์นี้ไม่รองรับการเข้าถึงกล้อง หรือไม่ได้เปิดผ่าน HTTPS');
+  }
+  try{
+    camCtl.stream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:{ideal:camCtl.facing},width:{ideal:1280},height:{ideal:720}},audio:false});
+    video.srcObject=camCtl.stream;
+    await video.play().catch(()=>{});
+    return true;
+  }catch(e){
+    if(!silent)showCamError(
+      e.name==='NotAllowedError'||e.name==='SecurityError'?'ไม่ได้รับอนุญาตให้ใช้กล้อง — เปิดสิทธิ์การเข้าถึงกล้องแล้วกด "ลองใหม่"':
+      e.name==='NotFoundError'?'ไม่พบอุปกรณ์กล้องในเครื่องนี้':
+      'เปิดกล้องไม่สำเร็จ ('+(e.name||'unknown')+')');
+    return false;
+  }
+}
+function stopStream(){
+  if(camCtl.stream){camCtl.stream.getTracks().forEach(t=>t.stop());camCtl.stream=null}
+  video.srcObject=null;
+}
+function showCamError(msg){$('#camErrMsg').textContent=msg;$('#camError').classList.remove('hidden')}
+function setVfState(cap){
+  const s=$('#vfState');
+  s.classList.toggle('cap',cap);
+  s.querySelector('span').textContent=cap?'CAPTURED':'LIVE';
+}
+function enterCamera(){
+  state.photo=null;state.photoTs=null;
+  frozen.classList.add('hidden');video.classList.remove('hidden');
+  $('#vfGrid').style.display='';setVfState(false);
+  $('#shuttleWrap').classList.remove('hidden');
+  $('#camActions').classList.add('hidden');
+  startCamera(false);
+}
+function leaveCamera(){stopStream()}
+function downscale(src,max){
+  const s=Math.min(1,max/Math.max(src.videoWidth||src.width,src.videoHeight||src.height));
+  const c=document.createElement('canvas');
+  c.width=Math.round((src.videoWidth||src.width)*s);
+  c.height=Math.round((src.videoHeight||src.height)*s);
+  c.getContext('2d').drawImage(src,0,0,c.width,c.height);
+  return c.toDataURL('image/jpeg',.7);
+}
+function capture(){
+  if(!camCtl.stream||!video.videoWidth){toast('กล้องยังมิพร้อมใช้งาน','err');return}
+  flashEl.classList.remove('go');void flashEl.offsetWidth;flashEl.classList.add('go');
+  state.photo=downscale(video,880);
+  state.photoTs=new Date();
+  frozen.src=state.photo;
+  frozen.classList.remove('hidden');
+  $('#vfGrid').style.display='none';setVfState(true);
+  $('#shuttleWrap').classList.add('hidden');
+  $('#camActions').classList.remove('hidden');
+}
+function retake(){
+  state.photo=null;state.photoTs=null;
+  frozen.classList.add('hidden');
+  $('#vfGrid').style.display='';setVfState(false);
+  $('#camActions').classList.add('hidden');
+  $('#shuttleWrap').classList.remove('hidden');
+}
+ $('#btnShutter').onclick=capture;
+ $('#btnRetake').onclick=retake;
+ $('#btnUseShot').onclick=()=>{
+  if(!state.photo){toast('กรุณากดชัตเตอร์ถ่ายรูปก่อน','err');return}
+  go('confirm');
+};
+ $('#btnFlip').onclick=async()=>{
+  const prev=camCtl.facing;
+  if(state.photo)retake();
+  camCtl.facing=prev==='user'?'environment':'user';
+  const ok=await startCamera(true);
+  if(!ok){camCtl.facing=prev;await startCamera(true);toast('ไม่พบกล้องอีกด้านในเครื่องนี้','err')}
+};
+ $('#btnRetryCam').onclick=()=>startCamera(false);
+ $('#btnFileErr').onclick=()=>$('#fileInput').click();
+ $('#btnFileAlt').onclick=()=>$('#fileInput').click();
+ $('#fileInput').addEventListener('change',function(){
+  const f=this.files&&this.files[0];this.value='';
+  if(!f)return;
+  if(!f.type.startsWith('image/')){toast('โปรดเลือกไฟล์รูปภาพ','err');return}
+  const rd=new FileReader();
+  rd.onload=()=>{
+    const img=new Image();
+    img.onload=()=>{
+      state.photo=downscale(img,880);state.photoTs=new Date();
+      toast('แนบรูปจากไฟล์เรียบร้อย','ok');
+      go('confirm');
+    };
+    img.src=rd.result;
+  };
+  rd.readAsDataURL(f);
+});
+
+/* ============ ข้อความรายงาน + Adaptive Card สำหรับ Teams ============ */
+function payloadText(r,withTime){
+  let s='Name : '+r.name+'\nRole : '+ROLE+'\nShift : '+r.shift+'\nProject : '+(r.project||'—')+'\nStatus : '+r.status;
+  if(withTime)s+='\nSubmit : '+fmtFullTs(r.ts);
+  return s;
+}
+function checkinCard(r){
+  return {type:'AdaptiveCard',$schema:'http://adaptivecards.io/schemas/adaptive-card.json',version:'1.4',
+    body:[
+      {type:'TextBlock',size:'Medium',weight:'Bolder',text:'รายงานประจำกะ · NOC'},
+      {type:'FactSet',facts:[
+        {title:'Name',value:r.name},{title:'Role',value:ROLE},{title:'Shift',value:r.shift},
+        {title:'Project',value:r.project||'—'},{title:'Status',value:r.status}]},
+      {type:'TextBlock',text:'Submit : '+fmtFullTs(r.ts),isSubtle:true,spacing:'Small',wrap:true}
+    ]};
+}
+function testCard(){
+  return {type:'AdaptiveCard',$schema:'http://adaptivecards.io/schemas/adaptive-card.json',version:'1.4',
+    body:[
+      {type:'TextBlock',size:'Medium',weight:'Bolder',text:'Accès · ทดสอบการเชื่อมต่อ Webhook'},
+      {type:'TextBlock',text:'หากเห็นข้อความนี้ใน Teams แสดงว่า Webhook ใช้งานได้อีก · '+fmtFullTs(Date.now()),isSubtle:true,wrap:true}
+    ]};
+}
+/* ส่งเข้า Teams Workflow Webhook — ถ้า CORS บล็อก จะส่งแบบ no-cors (ไม่ยืนยันผล) */
+async function postToTeams(card){
+  const url=(settings.webhook||'').trim();
+  if(!url)return{ok:false,reason:'no-url'};
+  const body=JSON.stringify({type:'message',attachments:[{contentType:'application/vnd.microsoft.card.adaptive',content:card}]});
+  try{
+    const ctl=new AbortController();const tm=setTimeout(()=>ctl.abort(),8000);
+    const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:body,signal:ctl.signal});
+    clearTimeout(tm);
+    return res.ok?{ok:true,status:res.status}:{ok:false,reason:'HTTP '+res.status};
+  }catch(e){
+    if(e&&e.name==='AbortError')return{ok:false,reason:'timeout'};
+    try{await fetch(url,{method:'POST',mode:'no-cors',body:body});return{ok:true,blind:true}}
+    catch(e2){return{ok:false,reason:'network'}}
+  }
+}
+
+/* ============ Confirmation ============ */
+function renderConfirm(){
+  $('#cfPhoto').src=state.photo;
+  $('#cfShotTs').textContent='SHOT '+fmtClock(state.photoTs);
+  $('#cfName').textContent=state.name;
+  $('#cfShift').textContent=state.shift;
+  $('#cfProject').textContent=state.project;
+  const st=$('#cfStatus');
+  st.textContent=state.status;
+  st.style.color=state.status==='On-site'?'var(--ok)':'var(--accent-deep)';
+  const dest=$('#cfDest');
+  dest.textContent=settings.webhook?'Teams · Webhook':'คัดลอก → วางใน Teams';
+  dest.style.color=settings.webhook?'var(--ok)':'var(--accent-deep)';
+  $('#btnWhSetup').classList.toggle('hidden',!!settings.webhook);
+  $('#cfPayload').textContent=payloadText({name:state.name,shift:state.shift,project:state.project,status:state.status},false);
+}
+ $('#btnCopyPayload').onclick=()=>copyText($('#cfPayload').textContent);
+ $('#btnRetakeMini').onclick=()=>go('camera');
+ $('#btnWhSetup').onclick=()=>go('admin');
+
+ $('#btnSubmit').onclick=async()=>{
+  if(!state.name||!state.shift||!state.project||!state.status||!state.photo){
+    toast('ข้อมูลไม่สมบูรณ์ โปรดตรวจสอบอีกครั้ง','err');return;
+  }
+  const b=$('#btnSubmit');
+  b.disabled=true;
+  b.innerHTML='<span class="spin"></span>กำลังส่งรายงาน…';
+  await new Promise(r=>setTimeout(r,settings.webhook?300:700));
+  lastRec={id:'R'+Date.now(),ts:Date.now(),name:state.name,shift:state.shift,project:state.project,
+    status:state.status,photo:state.photo,delivery:'demo'};
+  if(settings.webhook){
+    const r=await postToTeams(checkinCard(lastRec));
+    if(r.ok){lastRec.delivery=r.blind?'blind':'sent';lastRec.wh=r.status}
+    else{lastRec.delivery='fail';lastRec.reason=r.reason}
+  }
+  const rec={id:lastRec.id,ts:lastRec.ts,name:lastRec.name,shift:lastRec.shift,project:lastRec.project,
+    status:lastRec.status,delivery:lastRec.delivery,photoPurged:true};
+  records.unshift(rec);
+  if(!store(KEY,records))toast('พื้นที่จัดเก็บเต็ม — รายการนี้อยู่ในหน่วยความจำชั่วคราว','err');
+  b.disabled=false;b.textContent=SUBMIT_LABEL;
+  go('success');
+};
+
+/* ============ Success + ลบรูปหลังยืนยัน + คัดลอกรูป&ข้อความ ============ */
+function purgePhoto(){ // ลบรูปออกจากหน่วยความจำเมื่อออกจากหน้าสำเร็จ (ไม่เก็บลงอุปกรณ์)
+  if(lastRec)lastRec.photo=null;
+  state.photo=null;pngPromise=null;
+}
+function photoPngBlob(dataURL){
+  return new Promise((res,rej)=>{
+    const img=new Image();
+    img.onload=()=>{
+      const c=document.createElement('canvas');
+      c.width=img.naturalWidth;c.height=img.naturalHeight;
+      c.getContext('2d').drawImage(img,0,0);
+      c.toBlob(bl=>bl?res(bl):rej(new Error('conv')),'image/png');
+    };
+    img.onerror=()=>rej(new Error('img'));
+    img.src=dataURL;
+  });
+}
+function renderDelivery(){
+  const row=$('#deliverRow');
+  const M={
+    sent:{cls:'ok',ic:'check-circle',t:'ส่งเข้า Teams แล้ว',s:'ผ่าน Webhook (Teams Workflow) — ดูข้อความใน group chat',tag:'WEBHOOK · '+(lastRec.wh||200)},
+    blind:{cls:'blind',ic:'send',t:'ส่งคำขอแล้ว — โปรดตรวจสอบใน Teams',s:'เบราว์เซอร์ส่งแบบไม่ยืนยันผล (CORS)',tag:'NO-CORS'},
+    demo:{cls:'demo',ic:'copy',t:'โหมดทดลอง — ยังไม่เชื่อม Teams',s:'ใช้ปุ่มคัดลอกรูป + ข้อความ แล้ววางใน group chat ของทีม',tag:'DEMO'},
+    fail:{cls:'fail',ic:'alert',t:'ส่งเข้า Teams ไม่สำเร็จ',s:lastRec.reason||'network',tag:'ERROR'}
+  };
+  const m=M[lastRec.delivery]||M.demo;
+  row.className='deliver '+m.cls;
+  row.innerHTML=icon(m.ic,18)+'<div class="d-txt"><b>'+m.t+'</b><span>'+m.s+'</span></div><span class="d-tag">'+m.tag+'</span>';
+  $('#btnRetrySend').classList.toggle('hidden',lastRec.delivery!=='fail');
+}
+function renderSuccess(){
+  const d=new Date(lastRec.ts);
+  $('#stampSub').textContent='CHECKED-IN · '+d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+  $('#succTs').textContent='LOGGED '+fmtFullTs(lastRec.ts);
+  $('#succLine').textContent=lastRec.name+' · '+lastRec.shift+' · '+lastRec.status;
+  $('#succPhoto').src=lastRec.photo;
+  $('#succPayload').textContent=payloadText(lastRec,true);
+  renderDelivery();
+  const st=$('#stamp');st.classList.remove('in');void st.offsetWidth;st.classList.add('in');
+  const sc=$('#scr-success');sc.classList.remove('thud');void sc.offsetWidth;sc.classList.add('thud');
+  $$('.debris').forEach(x=>{x.classList.remove('in');void x.offsetWidth;x.classList.add('in')});
+  pngPromise=lastRec.photo?photoPngBlob(lastRec.photo).catch(()=>null):Promise.resolve(null); // เตรียม PNG ไว้คัดลอกลงคลิปบอร์ด
+}
+async function getPng(){try{return await pngPromise}catch(e){return null}}
+function showPhotoFallback(photo,text){
+  const {close}=openModal(
+    '<div class="modal-head"><span class="lbl">คัดลอกรูปด้วยตนเอง</span>'+
+    '<button class="icon-btn sm" data-close>'+icon('x',16)+'</button></div>'+
+    '<div class="modal-ph"><img src="'+photo+'" alt="รูปรายงาน"></div>'+
+    '<div class="modal-text">เบราว์เซอร์นี้ไม่รองรับการคัดลอกรูปอัตโนมัติ — กดค้างที่รูปเพื่อกัดลอก หรือบันทึกรูปลงเครื่อง แล้ววางใน Teams พร้อมข้อความ</div>'+
+    '<div class="modal-actions"><button class="mini-btn" id="fbSave">'+icon('download',14)+' บันทึกรูป</button>'+
+    '<button class="mini-btn" id="fbCopy">'+icon('copy',14)+' คัดลอกข้อความ</button></div>');
+  setTimeout(()=>{
+    const sv=$('#fbSave'),cp=$('#fbCopy');
+    if(sv)sv.onclick=()=>{const a=document.createElement('a');a.href=photo;a.download='acces-checkin.jpg';a.click()};
+    if(cp)cp.onclick=()=>copyText(text);
+  });
+}
+async function copyPhotoAndText(){
+  const text=payloadText(lastRec,true);
+  const png=await getPng();
+  if(png&&navigator.clipboard&&window.ClipboardItem){
+    try{
+      const item=new ClipboardItem({'image/png':Promise.resolve(png),'text/plain':Promise.resolve(new Blob([text],{type:'text/plain'}))});
+      await navigator.clipboard.write([item]);
+      toast('คัดลอกรูป + ข้อความแล้ว — พร้อมวางใน Teams','ok');return;
+    }catch(e){}
+  }
+  await copyText(text);
+  if(lastRec&&lastRec.photo)showPhotoFallback(lastRec.photo,text);
+}
+ $('#btnCopyBoth').onclick=()=>copyPhotoAndText();
+ $('#btnCopy3').onclick=()=>copyText(payloadText(lastRec,true));
+ $('#btnRetrySend').onclick=async()=>{
+  if(!lastRec)return;
+  if(!settings.webhook){toast('ยังไม่ตั้งค่า Webhook — ไปที่หลังบ้านเพื่อตั้งค่า','err');return}
+  const r=await postToTeams(checkinCard(lastRec));
+  if(r.ok){lastRec.delivery=r.blind?'blind':'sent';lastRec.wh=r.status}
+  else{lastRec.delivery='fail';lastRec.reason=r.reason}
+  const rec=records.find(x=>x.id===lastRec.id);
+  if(rec){rec.delivery=lastRec.delivery;store(KEY,records)}
+  renderDelivery();
+  toast(r.ok?'ส่งเข้า Teams แล้ว':'ส่งไม่สำเร็จ ('+r.reason+')',r.ok?'ok':'err');
+};
+function resetDraft(){
+  state.name=null;state.shift=null;state.project=null;state.status=null;state.photo=null;state.photoTs=null;
+  ddName.set(null);ddShift.set(null);ddProject.set(null);ddStatus.set(null);
+}
+ $('#btnHome').onclick=()=>{resetDraft();go('home',-1)}; // ออกจากหน้าสำเร็จ = ลบรูปอัตโนมัติ (leave hook)
+
+/* ============ แจ้งเตือน 10 นาทีก่อนเริ่มกะ ============ */
+function loadFired(){
+  const d=new Date(),dk=d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate());
+  const raw=load(FKEY)||{};fired={};
+  Object.keys(raw).forEach(k=>{if(k.indexOf(dk)===0)fired[k]=1});
+}
+function shiftStarts(){
+  const seen=new Set(),out=[];
+  const add=v=>{const m=String(v).match(SHIFT_RE);if(m&&!seen.has(v)){seen.add(v);out.push({label:v,h:+m[1],m:+m[2]})}};
+  SHIFTS.forEach(s=>add(s.v));
+  roster.forEach(r=>{if(r.shift)add(r.shift)});
+  return out;
+}
+async function ensureNotifPerm(){
+  if(!('Notification'in window))return 'unsupported';
+  try{
+    if(Notification.permission==='granted')return 'granted';
+    if(Notification.permission==='denied')return 'denied';
+    return await Notification.requestPermission();
+  }catch(e){return 'denied'}
+}
+async function fireReminder(label,isTest){
+  const title='แจ้งเตือนก่อนเริ่มงาน 10 นาที';
+  const body='กะ '+label+' จะเริ่มเวลาทำงานในอีก 10 นาที — ทุกคนเตรียมพร้อมรายงานตัว'+(isTest?' (ทดสอบระบบ)':'');
+  toast(body,'ok');
+  try{if('Notification'in window&&Notification.permission==='granted')new Notification('Accès · '+title,{body:body})}catch(e){}
+  if(settings.webhook){
+    const card={type:'AdaptiveCard',$schema:'http://adaptivecards.io/schemas/adaptive-card.json',version:'1.4',
+      body:[
+        {type:'TextBlock',size:'Medium',weight:'Bolder',color:'Warning',text:title+(isTest?' · ทดสอบ':'')},
+        {type:'TextBlock',text:body,wrap:true},
+        {type:'TextBlock',text:fmtFullTs(Date.now()),isSubtle:true}
+      ]};
+    const r=await postToTeams(card);
+    toast(r.ok?'ส่งการแจ้งเตือนเข้า Teams แล้ว':'ส่งการแจ้งเตือนเข้า Teams ไม่สำเร็จ',r.ok?'ok':'err');
+  }
+}
+function checkReminder(){
+  if(!settings.reminder)return;
+  const now=new Date();
+  const cur=now.getHours()*60+now.getMinutes();
+  const dk=now.getFullYear()+pad(now.getMonth()+1)+pad(now.getDate());
+  shiftStarts().forEach(s=>{
+    const fireMin=s.h*60+s.m-10, startMin=s.h*60+s.m;
+    if(cur>=fireMin&&cur<startMin){
+      const k=dk+'|'+s.label;
+      if(fired[k])return;
+      fired[k]=1;
+      const clean={};Object.keys(fired).forEach(x=>{if(x.indexOf(dk)===0)clean[x]=1});
+      fired=clean;store(FKEY,clean);
+      fireReminder(s.label,false);
+    }
+  });
+}
+
+/* ============ หลังบ้าน (Admin) ============ */
+function renderRosterTable(){
+  $('#rosterTag').textContent=roster.length+' คน';
+  $('#rosterBody').innerHTML=roster.map(r=>
+    '<tr><td><b>'+esc(r.name)+'</b></td><td class="mono">'+esc(r.shift||'—')+'</td><td>'+esc(r.project||'—')+'</td></tr>').join('');
+}
+function renderAdmin(){
+  $('#whInput').value=settings.webhook||'';
+  const wt=$('#whTag');
+  wt.textContent=settings.webhook?'ON':'OFF';
+  wt.className='tag '+(settings.webhook?'t-ok':'t-err');
+  $('#remToggle').checked=!!settings.reminder;
+  $$('#themeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.t===settings.theme));
+  $('#dataTag').textContent=records.length+' รายการ';
+  renderRosterTable();
+}
+ $('#btnSaveWh').onclick=()=>{
+  settings.webhook=$('#whInput').value.trim();
+  saveSettings();renderAdmin();
+  if(currentId==='home')renderHome();
+  toast(settings.webhook?'บันทึก Webhook แล้ว':'ล้างการตั้งค่า Webhook แล้ว','ok');
+};
+ $('#btnTestWh').onclick=async()=>{
+  const url=$('#whInput').value.trim();
+  if(!url){toast('กรอก Webhook URL ก่อนทดสอบ','err');return}
+  settings.webhook=url;saveSettings();
+  const b=$('#btnTestWh');const orig=b.innerHTML;
+  b.disabled=true;b.innerHTML='<span class="spin onlight"></span>กำลังทดสอบ…';
+  const r=await postToTeams(testCard());
+  b.disabled=false;b.innerHTML=orig;
+  if(r.ok&&!r.blind)toast('เชื่อมต่อสำเร็จ — ดูข้อความทดสอบใน Teams','ok');
+  else if(r.ok)toast('ส่งคำขอทดสอบแล้ว — โปรดตรวจสอบใน Teams','ok');
+  else toast('ทดสอบไม่สำเร็จ ('+r.reason+') — ตรวจสอบ URL อีกครั้ง','err');
+  renderAdmin();
+};
+
+/* --- อ่าน Excel (.xlsx ผ่าน SheetJS แบบโหลดเมื่อใช้งาน) / CSV --- */
+let sheetjsPromise=null;
+function ensureSheetJS(){
+  if(window.XLSX)return Promise.resolve(window.XLSX);
+  if(sheetjsPromise)return sheetjsPromise;
+  sheetjsPromise=new Promise((res,rej)=>{
+    const s=document.createElement('script');
+    s.src='https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js';
+    s.onload=()=>res(window.XLSX);
+    s.onerror=()=>{sheetjsPromise=null;rej(new Error('cdn'))};
+    document.head.appendChild(s);
+  });
+  return sheetjsPromise;
+}
+function parseCSV(text){
+  return text.replace(/\r\n?/g,'\n').split('\n').filter(l=>l.trim()).map(line=>{
+    const cells=[];let cur='',q=false;
+    for(let i=0;i<line.length;i++){
+      const ch=line[i];
+      if(q){ if(ch==='"'){ if(line[i+1]==='"'){cur+='"';i++} else q=false } else cur+=ch }
+      else if(ch==='"')q=true;
+      else if(ch===','){cells.push(cur);cur=''}
+      else cur+=ch;
+    }
+    cells.push(cur);return cells;
+  });
+}
+async function parseRosterFile(f){
+  const n=f.name.toLowerCase();
+  if(n.endsWith('.csv')||f.type==='text/csv')return parseCSV(await f.text());
+  if(n.endsWith('.xlsx')||n.endsWith('.xls')){
+    const X=await ensureSheetJS();
+    const wb=X.read(await f.arrayBuffer(),{type:'array'});
+    return X.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,defval:''});
+  }
+  throw new Error('รองรับเฉพาะ .xlsx / .csv');
+}
+function rowsToRoster(rows){
+  if(!rows.length)return[];
+  let start=0,ci={name:0,shift:1,project:2};
+  const h=(rows[0]||[]).map(c=>String(c||'').trim().toLowerCase());
+  if(h.some(c=>/name|ชื่อ/.test(c))){
+    start=1;
+    ci.name=h.findIndex(c=>/name|ชื่อ/.test(c));
+    ci.shift=h.findIndex(c=>/shift|กะ/.test(c));
+    ci.project=h.findIndex(c=>/project|โปรเจกต์|โปรเจค/.test(c));
+    if(ci.shift<0)ci.shift=1; if(ci.project<0)ci.project=2;
+  }
+  const m=new Map();
+  rows.slice(start).forEach(r=>{
+    const name=String(r[ci.name]||'').trim();
+    if(!name)return;
+    const shift=String(r[ci.shift]||'').trim();
+    const project=String(r[ci.project]||'').trim();
+    m.set(name,{name:name,shift:SHIFT_RE.test(shift)?shift:'',project:project});
+  });
+  return Array.from(m.values());
+}
+ $('#btnUploadXl').onclick=()=>$('#rosterInput').click();
+ $('#rosterInput').addEventListener('change',async function(){
+  const f=this.files&&this.files[0];this.value='';
+  if(!f)return;
+  try{
+    const rows=await parseRosterFile(f);
+    const list=rowsToRoster(rows);
+    if(!list.length){toast('ไม่พบข้อมูลที่ใช้ได้ในไฟล์ (ต้องมีคอลัมน์ Name)','err');return}
+    roster=list;store(RKEY,roster);
+    refreshDropdowns();resetDraft();renderRosterTable();
+    toast('อัปเดตรายชื่อ '+list.length+' คนจากไฟล์แล้ว','ok');
+  }catch(e){
+    toast(e.message==='cdn'?'โหลดตัวอ่านไฟล์ Excel ไม่สำเร็จ (ต้องออนไลน์) — ลองบันทึกเป็น .csv แล้วอัปโหลดใหม่':'อ่านไฟล์ไม่สำเร็จ ('+(e.message||'error')+')','err');
+  }
+});
+ $('#btnTemplate').onclick=()=>{
+  const csv='\uFEFFName,Shift,Project\naaaa,7.00-19.00,Cloud Operation Support\nbbbb,8.00-20.00,Cloud Operation Support\n';
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.download='acces_roster_template.csv';a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+  toast('ดาวน์โหลดแบบแล้ว — เปิดใน Excel แก้ไขได้เลย','ok');
+};
+ $('#btnResetRoster').onclick=()=>confirmModal('รีเซ็ตรายชื่อ?','รายชื่อและตารางกะจะกลับเป็นค่าเริ่มต้น (aaaa / bbbb)',()=>{
+  roster=DEFAULT_ROSTER.map(x=>({...x}));store(RKEY,roster);
+  refreshDropdowns();resetDraft();renderRosterTable();
+  toast('รีเซ็ตรายชื่อแล้ว','ok');
+});
+ $('#remToggle').addEventListener('change',async function(){
+  settings.reminder=this.checked;saveSettings();
+  if(currentId==='home')renderHome();
+  if(this.checked){
+    const p=await ensureNotifPerm();
+    toast(p==='granted'?'เปิดการแจ้งเตือนแล้ว — จะเตือน 10 นาทีก่อนเริ่มกะ':
+      (p==='denied'?'เปิดใช้แล้ว แต่ไม่ได้รับอนุญาตแจ้งเตือนระบบ — จะเตือนในแอปและ Teams เท่านั้น':'เปิดการแจ้งเตือนในแอปแล้ว'),'ok');
+  }else toast('ปิดการแจ้งเตือนแล้ว','ok');
+});
+ $('#btnTestRem').onclick=async()=>{
+  await ensureNotifPerm();
+  const s=shiftStarts()[0]||{label:'7.00-19.00'};
+  fireReminder(s.label,true);
+};
+ $$('#themeSeg button').forEach(b=>b.onclick=()=>{
+  settings.theme=b.dataset.t;saveSettings();applyTheme();renderAdmin();
+});
+ $('#btnClear2').onclick=()=>confirmModal('ล้างประวัติทั้งหมด?','การลบรายการทั้งหมดไม่สามารถย้อนกลับได้',()=>{
+  clearHistory();toast('ล้างประวัติเรียบร้อย','ok');
+});
+ $('#btnWipe').onclick=()=>confirmModal('รีเซ็ตทั้งหมด?','ล้างประวัติ รายชื่อ และการตั้งค่าทั้งหมด กลับเป็นค่าเริ่มต้นของแอป',()=>{
+  try{[KEY,RKEY,SKEY,FKEY].forEach(k=>localStorage.removeItem(k))}catch(e){}
+  records=[];roster=DEFAULT_ROSTER.map(x=>({...x}));
+  settings={webhook:'',reminder:true,theme:'auto'};fired={};
+  refreshDropdowns();resetDraft();applyTheme();renderAdmin();
+  toast('รีเซ็ตระบบเรียบร้อย','ok');
+});
+
+/* ============ โหลด noc_roster.json ============ */
+const rosterReady = (async function loadRoster(){
+  try{
+    const resp=await fetch('noc_roster.json');
+    const raw=await resp.json();
+    // raw: [{name, days:{dayNum:"shiftCode"}, ...}]
+    // Convert to [{name, shift, project}] by finding today's shift
+    const now=new Date();
+    const todayDay=String(now.getDate());
+    roster=raw.map(p=>({
+      name:p.name,
+      shift:p.days&&p.days[todayDay]?p.days[todayDay]:'',
+      project:PROJECT_DEFAULT
+    })).filter(r=>r.name&&r.name.trim());
+    console.log('Roster loaded from JSON:', roster.length, 'people');
+  }catch(e){
+    console.warn('Failed to load noc_roster.json, using localStorage:',e);
+    const saved=load(RKEY);
+    if(saved&&saved.length) roster=saved;
+  }
+  // อัปเดต dropdown + admin table + home dashboard
+  refreshDropdowns();
+  renderHome();
+  if(currentId==='admin') renderAdmin();
+  console.log('Dropdowns updated with', roster.length, 'people');
+})();
+</script>
+</body>
+</html>

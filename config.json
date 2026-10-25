@@ -1,0 +1,27 @@
+{
+  "workers": [
+    "Apisith Kogram",
+    "Thanachot Phuttiwarakul",
+    "Sasiwan Laohapornsvan",
+    "Prapatsorn Sodjaimai",
+    "Phanuwat Keawon",
+    "Pipatpong Srisara",
+    "Tinapat Sangdang",
+    "Phanuphong Lachantha",
+    "Supaporn Khumsombat",
+    "Phudtan Sodsai"
+  ],
+  "shiftSchedule": {
+    "description": "ตารางกะงาน — แก้ไขที่ shiftSchedule object ด้านล่าง",
+    "07.00": "07.00-19.00",
+    "08.00": "08.00-20.00",
+    "19.00": "19.00-07.00",
+    "20.00": "20.00-08.00",
+    "8x5": "8x5 (08.30-17.30)"
+  },
+  "webhookUrl": "https://default45be8033beb74d4bab77608ee11e64.49.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/28/workflows/da2daa5e8450486590aea098d3bde28e/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=_Z3x_KwTSNo5_1jOD10WT89QLGHWnbjdEg21Qz4G184",
+  "default": {
+    "role": "NOC Engineer",
+    "project": "Cloud Operation Support"
+  }
+}

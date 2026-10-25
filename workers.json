@@ -1,0 +1,10 @@
+[
+  { "name": "Apisith Kogram", "nickname": "Dodo", "shift": "07:00-19:00" },
+  { "name": "Thanachot Phuttiwarakul", "nickname": "Mink", "shift": "08:00-20:00" },
+  { "name": "Sasiwan Laohapornsvan", "nickname": "Yok", "shift": "19:00-07:00" },
+  { "name": "Prapatsorn Sodjaimai", "nickname": "Milk", "shift": "20:00-08:00" },
+  { "name": "Phanuwat Keawon", "nickname": "Khing", "shift": "08:30-17:30" },
+  { "name": "Phanuphong Lachantha", "nickname": "Pick", "shift": "" },
+  { "name": "Tinapat Sangdang", "nickname": "Bo", "shift": "" },
+  { "name": "Supaporn Khumsombat", "nickname": "Nack", "shift": "" }
+]

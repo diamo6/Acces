@@ -314,7 +314,7 @@ class CheckinHandler(http.server.BaseHTTPRequestHandler):
             data = data['data']
         
         embed = data.get('embed') or data.get('embeds', [{}])[0]
-        image = data.get('image', '')
+        image_url = data.get('image', '')
         username = data.get('username', 'NOC Check-in System')
         avatar_url = data.get('avatar_url', '')
         
@@ -324,9 +324,11 @@ class CheckinHandler(http.server.BaseHTTPRequestHandler):
         if avatar_url:
             payload['avatar_url'] = avatar_url
         if embed:
-            # Clean up empty image fields
-            if not embed.get('image'):
-                embed.pop('image', None)
+            # Move image to embed (Discord API requires it inside embed)
+            if image_url:
+                embed['image'] = {'url': image_url}
+            # Clean empty fields
+            embed.pop('image', None) if not embed.get('image') else embed.get('image', None)
             payload['embeds'] = [embed]
         elif not payload.get('embeds'):
             self.send_json({'error': 'missing_fields'}, 400)
@@ -339,7 +341,7 @@ class CheckinHandler(http.server.BaseHTTPRequestHandler):
             if r.status_code == 204 or r.ok:
                 self.send_json({'ok': True})
             else:
-                self.send_json({'error': 'discord_failed', 'status': r.status_code}, 502)
+                self.send_json({'error': 'discord_failed', 'status': r.status_code, 'body': r.text[:200]}, 502)
         except Exception as e:
             self.send_json({'error': 'send_failed', 'detail': str(e)}, 502)
 

@@ -17,6 +17,7 @@ MAX_PHOTO_CHARS = 700_000
 MAX_THUMB_CHARS = 120_000
 MAX_BODY_CHARS = 900_000
 TEAM_CODE = os.environ.get("TEAM_CODE", "LOCAL-TEST-CODE")
+DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL", "https://discord.com/api/webhooks/1551038546960195596/PjU5Vz9jXVfjIQcxHDwdDCdHBvEA2emlNv26zs18Q-u4PImSo8nhCV28h4q7jyMtjgiF")
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'checkin.db')
 
 # Ensure data directory exists
@@ -303,14 +304,44 @@ class CheckinHandler(http.server.BaseHTTPRequestHandler):
 
     def handle_notify_discord(self, body):
         """Handle POST /api/notify/discord — server-side Discord webhook dispatch."""
+        if not DISCORD_WEBHOOK_URL:
+            self.send_json({'error': 'webhook_not_configured'}, 500)
+            return
+        
+        # Parse nested data payload
         data = body.get('data', body) if isinstance(body, dict) else {}
+        if 'data' in data and isinstance(data['data'], dict):
+            data = data['data']
+        
         embed = data.get('embed') or data.get('embeds', [{}])[0]
         image = data.get('image', '')
-        # Simulate Discord webhook — just log and return ok
+        username = data.get('username', 'NOC Check-in System')
+        avatar_url = data.get('avatar_url', '')
+        
+        payload = {}
+        if username:
+            payload['username'] = username
+        if avatar_url:
+            payload['avatar_url'] = avatar_url
         if embed:
-            self.send_json({'ok': True})
-        else:
+            # Clean up empty image fields
+            if not embed.get('image'):
+                embed.pop('image', None)
+            payload['embeds'] = [embed]
+        elif not payload.get('embeds'):
             self.send_json({'error': 'missing_fields'}, 400)
+            return
+        
+        # Actually send to Discord
+        import requests
+        try:
+            r = requests.post(DISCORD_WEBHOOK_URL, json=payload, timeout=10)
+            if r.status_code == 204 or r.ok:
+                self.send_json({'ok': True})
+            else:
+                self.send_json({'error': 'discord_failed', 'status': r.status_code}, 502)
+        except Exception as e:
+            self.send_json({'error': 'send_failed', 'detail': str(e)}, 502)
 
     def handle_notify_teams(self, body):
         """Handle POST /api/notify/teams — server-side Teams webhook dispatch."""

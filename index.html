@@ -566,7 +566,7 @@ img{display:block}
 <div id="exportModal" class="modal" style="display:none;max-width:400px">
   <div class="modal-head">
     <span class="lbl">ดาวน์โหลดรายงาน</span>
-    <button class="icon-btn" id="btnCloseExport" aria-label="ปด"><i data-icon="x"></i></button>
+    <button class="icon-btn" id="btnCloseExport" data-close aria-label="ปด"><i data-icon="x"></i></button>
   </div>
   <div style="padding:16px 4px">
     <div style="margin-bottom:14px">
@@ -952,13 +952,26 @@ async function openRecord(id){
 $('#btnExport').onclick=()=>{
   const m=$('#exportModal');
   if(m){
+    // Create overlay backdrop
+    let bd=$('#exportModalBd');
+    if(!bd){
+      bd=document.createElement('div');
+      bd.id='exportModalBd';
+      bd.className='modal-bd';
+      m.parentNode.insertBefore(bd,m);
+    }
     m.style.display='';
+    requestAnimationFrame(()=>{bd.classList.add('show');m.classList.add('show')});
     const today=new Date();
     const from=new Date(today.getFullYear(),today.getMonth(),1).toISOString().slice(0,10);
     $('#expFrom').value=from;
     $('#expTo').value=today.toISOString().slice(0,10);
     $('#expStatus').textContent='';
-    m.querySelectorAll('.icon-btn')[0].onclick=()=>{m.style.display='none'};
+    // Close handler
+    const close=()=>{bd.classList.remove('show');m.classList.remove('show');setTimeout(()=>{bd.classList.remove('show')},280)};
+    m.querySelector('[data-close]').onclick=close;
+    m.querySelector('.icon-btn').onclick=close;
+    bd.onclick=close;
   }
 };
 

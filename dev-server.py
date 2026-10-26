@@ -314,34 +314,53 @@ class CheckinHandler(http.server.BaseHTTPRequestHandler):
             data = data['data']
         
         embed = data.get('embed') or data.get('embeds', [{}])[0]
-        image_url = data.get('image', '')
+        image_data = data.get('image', '')  # base64 data URL
         username = data.get('username', 'NOC Check-in System')
         avatar_url = data.get('avatar_url', '')
         
-        payload = {}
-        if username:
-            payload['username'] = username
-        if avatar_url:
-            payload['avatar_url'] = avatar_url
-        if embed:
-            # Move image to embed (Discord API requires it inside embed)
-            if image_url:
-                embed['image'] = {'url': image_url}
-            # Clean empty fields
-            embed.pop('image', None) if not embed.get('image') else embed.get('image', None)
-            payload['embeds'] = [embed]
-        elif not payload.get('embeds'):
-            self.send_json({'error': 'missing_fields'}, 400)
-            return
-        
-        # Actually send to Discord
         import requests
+        import base64
+        
+        embed_clean = {}
+        if embed:
+            embed_clean = dict(embed) if isinstance(embed, dict) else {}
+            embed_clean.pop('image', None)
+        
         try:
-            r = requests.post(DISCORD_WEBHOOK_URL, json=payload, timeout=10)
+            if image_data and image_data.startswith('data:'):
+                # Parse base64 data URL and send as multipart with file
+                header, b64 = image_data.split(',', 1)
+                media_type = header.split(';')[0].split(':')[1] if ';' in header else 'image/png'
+                img_bytes = base64.b64decode(b64)
+                
+                payload_json = json.dumps({
+                    'embeds': [embed_clean] if embed_clean else None,
+                    'username': username or 'NOC Check-in',
+                    'avatar_url': avatar_url or None
+                })
+                
+                files = {'files': ('image.png', img_bytes, media_type)}
+                data = {'payload_json': payload_json}
+                
+                r = requests.post(DISCORD_WEBHOOK_URL, data=data, files=files, timeout=10)
+            else:
+                # No image — send as JSON
+                payload_json = {}
+                if embed_clean:
+                    payload_json['embeds'] = [embed_clean]
+                if username:
+                    payload_json['username'] = username
+                if avatar_url:
+                    payload_json['avatar_url'] = avatar_url
+                if not payload_json:
+                    payload_json = {'content': '📋 Check-in Notification'}
+                
+                r = requests.post(DISCORD_WEBHOOK_URL, json=payload_json, timeout=10)
+            
             if r.status_code == 204 or r.ok:
                 self.send_json({'ok': True})
             else:
-                self.send_json({'error': 'discord_failed', 'status': r.status_code, 'body': r.text[:200]}, 502)
+                self.send_json({'error': 'discord_failed', 'status': r.status_code, 'body': r.text[:300]}, 502)
         except Exception as e:
             self.send_json({'error': 'send_failed', 'detail': str(e)}, 502)
 
